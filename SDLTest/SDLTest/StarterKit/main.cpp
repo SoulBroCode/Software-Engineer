@@ -2,13 +2,11 @@
 #include <thread>
 #include <string>
 
-#include <TinyXML2.h>
 
 #include <SDL.h>
 #include <SDL_image.h>
 
 #include <Game.h>
-#include <Player.h>
 
 #include <iostream>
 #include <iomanip>
@@ -18,22 +16,13 @@
 #include <queue>
 
 using namespace std;
-using namespace tinyxml2;
 
 int main(int argc, char** argv){
 
 	DEBUG_MSG("Game Object Created");
 
-	Player* player = new Player();
-
 	Game* game = new Game();
 
-	XMLDocument doc;
-	doc.LoadFile("Levels.xml");
-
-	const char* temp = doc.FirstChildElement("root")->FirstChildElement("level1")->FirstChildElement("player")->FirstChildElement("health")->GetText();
-
-	DEBUG_MSG(temp);
 
 	//Adjust screen positions as needed
 	DEBUG_MSG("Game Initialising");

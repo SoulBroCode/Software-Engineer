@@ -81,36 +81,24 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="A-star.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameObjectFactory.cpp" />
-    <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Level.cpp" />
-    <ClCompile Include="GameObjectParameters.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayerFactory.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Misc.cpp" />
     <ClCompile Include="Tile.cpp" />
-    <ClCompile Include="TinyXML2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AbstractFactory.h" />
+    <ClInclude Include="A-star.h" />
     <ClInclude Include="Circle.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="Debug.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GameObjectFactory.h" />
-    <ClInclude Include="GameObjectParameters.h" />
-    <ClInclude Include="Graph.h" />
-    <ClInclude Include="GraphArc.h" />
-    <ClInclude Include="GraphNode.h" />
-    <ClInclude Include="Layer.h" />
-    <ClInclude Include="Level.h" />
-    <ClInclude Include="LevelParser.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayerFactory.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GraphicsConst.h" />
+    <ClInclude Include="Grid.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="Misc.h" />
     <ClInclude Include="Tile.h" />
-    <ClInclude Include="TinyXML2.h" />
     <ClInclude Include="Vector2D.h" />
   </ItemGroup>
   <ItemGroup>

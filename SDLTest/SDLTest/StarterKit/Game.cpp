@@ -25,8 +25,8 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		m_Tile = new Tile[m_MaxTile];
 		m_TileRect = new SDL_Rect[m_MaxTile];
 
-		int tileLengthCount = sqrt(m_MaxTile);
-		int tileSize = width / tileLengthCount;
+		float tileLengthCount = sqrt(m_MaxTile);
+		float tileSize = width / tileLengthCount;
 
 		int currentTileIndex = 0;
 		for (int i = 0; i < tileLengthCount; i++)
@@ -39,6 +39,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 			}
 		}
 
+		_baseMap = new Map(39, 19, 1);
 
 
 		if(m_p_Window != 0)
@@ -87,8 +88,8 @@ void Game::LoadContent()
 		m_Destination.y = m_Source.y = 0;
 		m_Destination.w = m_Source.w;
 		m_Destination.h = m_Source.h;
-
-		//DEBUG_MSG("Destination X:" + m_Destination.x);
+		int i = 20;
+		DEBUG_MSG("Destination X:" +i);
 		/*DEBUG_MSG("Destination Y:" + m_Destination.y);
 		DEBUG_MSG("Destination W:" + m_Destination.w);
 		DEBUG_MSG("Destination H:" + m_Destination.h);*/

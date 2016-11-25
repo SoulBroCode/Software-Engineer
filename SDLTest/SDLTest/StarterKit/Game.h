@@ -3,6 +3,8 @@
 #include "Debug.h"
 #include <SDL.h>
 #include "Tile.h"
+#include "Grid.h"
+#include "Map.h"
 class Game
 {
 public:
@@ -30,6 +32,10 @@ private:
 	Tile* m_Tile;
 	const int m_MaxTile = 900;
 	SDL_Rect* m_TileRect;
+
+	Map* _baseMap;
+	Grid* _start;
+	Grid* _end;
 };
 #endif
 
