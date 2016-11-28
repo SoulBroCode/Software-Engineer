@@ -5,6 +5,7 @@
 #include "Tile.h"
 #include "Grid.h"
 #include "Map.h"
+#include "A-star.h"
 class Game
 {
 public:
@@ -24,18 +25,19 @@ public:
 private:
 	bool m_running;
 	SDL_Window* m_p_Window;
-	SDL_Renderer* m_p_Renderer;
+	SDL_Renderer* mRenderer;
 	SDL_Texture* m_p_Texture;
 	SDL_Rect m_Source;
 	SDL_Rect m_Destination;
 	SDL_Surface* m_p_Surface;
 	Tile* m_Tile;
-	const int m_MaxTile = 900;
+	const int mMaxTile = 900;
 	SDL_Rect* m_TileRect;
 
 	Map* _baseMap;
 	Grid* _start;
 	Grid* _end;
+	int	_heuFunc;
 };
 #endif
 

@@ -4,7 +4,7 @@
 #include <iostream>
 #include "GraphicsConst.h"
 #include "Grid.h"
-
+#include "SDL.h"
 class Map {
 private:
 	Grid **_grid;
@@ -27,7 +27,7 @@ public:
 	Grid* getGrid(int w, int h);
 	Grid* getNeighbor(Grid* current, int direction);
 
-	void draw(int x0, int y0);
+	void draw(SDL_Renderer *rend ,int x0, int y0);
 
 	// Debugging methods
 	void debug_printGrid();

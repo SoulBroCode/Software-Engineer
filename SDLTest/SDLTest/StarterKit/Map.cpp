@@ -122,9 +122,42 @@ Grid* Map::getNeighbor(Grid* current, int direction)
 		return &_grid[n_w][n_h];
 }
 
-void Map::draw(int x0, int y0)
+void Map::draw(SDL_Renderer *rend, int x0, int y0)
 {
-
+	
+	for (int j = 0; j < _height; j++)
+		for (int i = 0; i < _width; i++)
+		{
+			SDL_Rect* rect = new SDL_Rect();
+			rect->x = 30 * i;
+			rect->y = 30 * j;
+			rect->h = 30;
+			rect->w = 30;
+			SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+			/*
+			if (_grid[i][j].getGridVal() == GRID_FIELD)
+				if (_grid[i][j].getStatus() == GRID_STATUS_FREE)
+				else if (_grid[i][j].getStatus() == GRID_STATUS_OPEN)
+				else 
+				*/
+			//if (_grid[i][j].getGridVal() == GRID_WALL)
+				//SDL_RenderDrawRect(rend, rect);
+			if (_grid[i][j].getGridVal() == GRID_END)
+			{
+				SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
+			}
+			else if (_grid[i][j].getGridVal() == GRID_START)
+			{
+				SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
+			}
+			else if (_grid[i][j].getGridVal() == GRID_PATH)
+			{
+				SDL_SetRenderDrawColor(rend, 125, 125, 125, 255);
+			}
+			SDL_RenderFillRect(rend, rect);
+			SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+			SDL_RenderDrawRect(rend, rect);
+		}
 }
 
 // ================================

@@ -22,10 +22,10 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		m_p_Window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
 
 		
-		m_Tile = new Tile[m_MaxTile];
-		m_TileRect = new SDL_Rect[m_MaxTile];
+		m_Tile = new Tile[mMaxTile];
+		m_TileRect = new SDL_Rect[mMaxTile];
 
-		float tileLengthCount = sqrt(m_MaxTile);
+		float tileLengthCount = sqrt(mMaxTile);
 		float tileSize = width / tileLengthCount;
 
 		int currentTileIndex = 0;
@@ -39,17 +39,23 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 			}
 		}
 
-		_baseMap = new Map(39, 19, 1);
-
+		_baseMap = new Map(tileLengthCount, tileLengthCount, 1);
+		_baseMap->getGrid(tileLengthCount - 1, tileLengthCount - 1)->setGridVal(GRID_START);
+		_baseMap->getGrid(10, 0)->setGridVal(GRID_END);
+		_start = _baseMap->getStartGrid();
+		_end = _baseMap->getEndGrid();
+		Astar *algo = new Astar(_baseMap);
+		algo->setHeuristicFunc(_heuFunc);
+		algo->findPath(_start, _end);
 
 		if(m_p_Window != 0)
 		{
 			DEBUG_MSG("Window creation success");
-			m_p_Renderer = SDL_CreateRenderer(m_p_Window, -1, 0);
-			if(m_p_Renderer != 0)
+			mRenderer = SDL_CreateRenderer(m_p_Window, -1, 0);
+			if(mRenderer != 0)
 			{
 				DEBUG_MSG("Renderer creation success");
-				SDL_SetRenderDrawColor(m_p_Renderer, 255, 255, 255, 255);
+				SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
 			}
 			else
 			{
@@ -79,7 +85,7 @@ void Game::LoadContent()
 {
 	DEBUG_MSG("Loading Content");
 	m_p_Surface = SDL_LoadBMP("assets/sprite.bmp");
-	m_p_Texture = SDL_CreateTextureFromSurface(m_p_Renderer, m_p_Surface);
+	m_p_Texture = SDL_CreateTextureFromSurface(mRenderer, m_p_Surface);
 	SDL_FreeSurface(m_p_Surface);
 
 	if(SDL_QueryTexture(m_p_Texture, NULL, NULL, &m_Source.w, &m_Destination.h)==0)
@@ -104,33 +110,35 @@ void Game::LoadContent()
 void Game::Render()
 {
 
-	SDL_RenderClear(m_p_Renderer);
+	SDL_RenderClear(mRenderer);
 	//DEBUG_MSG("Width Source" + m_Destination.w);
 	//DEBUG_MSG("Width Destination" + m_Destination.w);
 
-	if (m_p_Renderer != nullptr && m_p_Texture != nullptr)
+	if (mRenderer != nullptr && m_p_Texture != nullptr)
 	{
-		SDL_SetRenderDrawColor(m_p_Renderer, 255, 0, 0, 255);
+		SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
 
-		
+		_baseMap->draw(mRenderer, 10, 10);
+
+
 		///////////////rectangles////////
 
-		SDL_RenderDrawRects(m_p_Renderer, m_TileRect, m_MaxTile);
+		//SDL_RenderDrawRects(m_p_Renderer, m_TileRect, m_MaxTile);
 		///////////circles///////
-		for (int i = 0; i < m_MaxTile; i++)
+		for (int i = 0; i < mMaxTile; i++)
 		{
-			fill_circle(m_p_Renderer, m_Tile[i].getOrigin().x, m_Tile[i].getOrigin().y, 7.5f, 0, 0, 222, 255);
+			//fill_circle(m_p_Renderer, m_Tile[i].getOrigin().x, m_Tile[i].getOrigin().y, 7.5f, 0, 0, 222, 255);
 			//draw_circle(m_p_Renderer, m_Tile[i].getOrigin().x, m_Tile[i].getOrigin().y, 15, 0, 0, 250, 255);
 		}
 		/////////////////////////////////
 
 
 
-		SDL_SetRenderDrawColor(m_p_Renderer, 0, 0, 0, 255);
+		SDL_SetRenderDrawColor(mRenderer, 0, 0, 0, 255);
 	}
 		
 		//SDL_RenderCopy(m_p_Renderer, m_p_Texture, NULL, NULL);
-	SDL_RenderPresent(m_p_Renderer);
+	SDL_RenderPresent(mRenderer);
 }
 
 void Game::Update()
@@ -153,7 +161,7 @@ void Game::HandleEvents()
 					break;
 				case SDLK_UP:
 					DEBUG_MSG("Up Key Pressed");
-					if (SDL_RenderDrawPoint(m_p_Renderer, 500, 500) == 0)
+					if (SDL_RenderDrawPoint(mRenderer, 500, 500) == 0)
 					{
 
 					}
@@ -294,6 +302,6 @@ void Game::CleanUp()
 {
 	DEBUG_MSG("Cleaning Up");
 	SDL_DestroyWindow(m_p_Window);
-	SDL_DestroyRenderer(m_p_Renderer);
+	SDL_DestroyRenderer(mRenderer);
 	SDL_Quit();
 }
