@@ -82,22 +82,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="A-star.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
-    <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="A-star.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GraphicsConst.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Map.h" />
-    <ClInclude Include="Tile.h" />
-    <ClInclude Include="Vector2D.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Levels.xml">

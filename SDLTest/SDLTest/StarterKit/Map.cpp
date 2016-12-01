@@ -1,11 +1,12 @@
 #include "Map.h"
 
-Map::Map(int mapWidth, int mapHeight, float gridWidth, float gridHeight, int defaultVal) : 
+Map::Map(const int &mapWidth, const int &mapHeight, const float &gridWidth, const float &gridHeight, const int &defaultVal) : 
 	_mapWidth(mapWidth), 
 	_mapHeight(mapHeight),
 	_gridWidth(gridWidth),
 	_gridHeight(gridHeight)
 {
+
 	_grid = new Grid*[_mapWidth];
 	for (int i = 0; i < _mapWidth; i++)
 	{
@@ -19,7 +20,7 @@ Map::Map(int mapWidth, int mapHeight, float gridWidth, float gridHeight, int def
 	// (width, height)
 }
 
-Map::Map(int width, int height, int defaultVal)
+Map::Map(const int &width, const int &height, const int &defaultVal)
 {
 	_mapWidth = width;
 	_mapHeight = height;
@@ -66,7 +67,7 @@ void Map::reinit()
 		}
 }
 
-void Map::setGridVal(int w, int h, int val)
+void Map::setGridVal(const int &w, const int &h, const int &val)
 {
 	_grid[w][h].setGridVal(val);
 }
@@ -89,27 +90,27 @@ Grid* Map::getEndGrid()
 	return nullptr;
 }
 
-int Map::getGridVal(int w, int h)
+const int Map::getGridVal(const int &w, const int &h)
 {
 	return _grid[w][h].getGridVal();
 }
 
-int Map::getWidth()
+const int Map::getWidth()
 {
 	return _mapWidth;
 }
 
-int Map::getHeight()
+const int Map::getHeight()
 {
 	return _mapHeight;
 }
 
-Grid* Map::getGrid(int w, int h)
+Grid* Map::getGrid(const int &w, const int &h)
 {
 	return &_grid[w][h];
 }
 
-Grid* Map::getNeighbor(Grid* current, int direction)
+Grid* Map::getNeighbor(Grid* current, const int &direction)
 {
 	static int _direction[] = {
 		         0, -1,
@@ -127,11 +128,12 @@ Grid* Map::getNeighbor(Grid* current, int direction)
 		return &_grid[n_w][n_h];
 }
 
-void Map::draw(SDL_Renderer *rend, int x0, int y0)
+void Map::draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned short &offsetY)
 {
-	
-	for (int j = 0; j < _mapHeight; j++)
-		for (int i = 0; i < _mapWidth; i++)
+	int maxOffsetX = offsetX + 30;
+	int maxOffsetY = offsetY + 30;
+	for (int j = offsetX; j < maxOffsetX; j++)
+		for (int i = offsetY; i < maxOffsetY; i++)
 		{
 			SDL_Rect* rect = new SDL_Rect();
 			rect->x = _gridWidth * i;

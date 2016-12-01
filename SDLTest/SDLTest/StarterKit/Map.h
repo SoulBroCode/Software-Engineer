@@ -11,23 +11,23 @@ private:
 	int _mapWidth, _mapHeight;
 	float _gridWidth, _gridHeight;
 public:
-	Map(int mapWidth, int mapHeight, float gridWidth, float gridHeight, int defaulVal);
-	Map(int width, int height, int defaulVal);
+	Map(const int &mapWidth, const int &mapHeight, const float &gridWidth, const float &gridHeight, const int &defaulVal);
+	Map(const int &width, const int &height, const int &defaulVal);
 	~Map();
 
 	void resetMap();
 	void reinit();
-	void setGridVal(int w, int h, int val);
+	void setGridVal(const int &w,const int &h, const int &val);
 
-	int getGridVal(int w, int h);
+	const int getGridVal(const int &w, const int &h);
 	Grid* getStartGrid();
 	Grid* getEndGrid();
-	int getWidth();
-	int getHeight();
-	Grid* getGrid(int w, int h);
-	Grid* getNeighbor(Grid* current, int direction);
+	const int getWidth();
+	const int getHeight();
+	Grid* getGrid(const int &w, const int &h);
+	Grid* getNeighbor(Grid* current,const int &direction);
 
-	void draw(SDL_Renderer *rend ,int x0, int y0);
+	void draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned short &offsetY);
 
 	// Debugging methods
 	void debug_printGrid();

@@ -22,14 +22,30 @@
 #define	COLOR_START_GRID		al_map_rgb(255, 0, 139)
 #define	COLOR_PATH				al_map_rgb(255, 255, 0)		
 
+static char GRID_STATUS_FREE = 0;
+static char GRID_STATUS_OPEN = 1;
+static char GRID_STATUS_CLOSE = 255;
 
-#define	GRID_WALL				0x00
-#define	GRID_FIELD				0x01
-#define GRID_STATUS_FREE		0x00
-#define GRID_STATUS_OPEN		0x01
-#define	GRID_STATUS_CLOSE		0xFF
-#define GRID_END				0x22
-#define	GRID_START				0x11
-#define GRID_PATH				0x10
+
+static char GRID_WALL = 0;
+static char GRID_FIELD = 1;
+
+static char GRID_END = 34;
+static char GRID_START = 17;
+static char GRID_PATH = 16;
+
+static char GAME_STAGE_1 = 1;
+static char GAME_STAGE_2 = 2;
+static char GAME_STAGE_3 = 3;
+
+
+//The dot dimensions
+static const int DOT_WIDTH = 20;
+static const int DOT_HEIGHT = 20;
+
+//The dimensions of the level
+static const int LEVEL_WIDTH = 1280;
+static const int LEVEL_HEIGHT = 960;
+
 
 #endif _GRAPHICSCONST_H_

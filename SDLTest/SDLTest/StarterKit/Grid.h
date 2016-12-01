@@ -5,34 +5,34 @@
 
 class Grid {
 private:
-	int _status;
-	int _value;
-	int _x;
-	int _y;
+	char _status;
+	char _value;
+	short _x;
+	short _y;
 
-	Grid*	_parentGrid;
+	Grid* _parentGrid;
 
-	double _G;
-	double _H;
+	float _G;
+	float _H;
 
 public:
 	Grid();
 	~Grid();
 	
-	void setStatus(int stat);
-	void setGridVal(int val);
-	void setH(double H);
-	void setG(double G);
-	void setGridCoord(int x, int y);
+	void setStatus(const char &stat);
+	void setGridVal(const char &val);
+	void setH(const float &H);
+	void setG(const float &G);
+	void setGridCoord(const int& x,const int &y);
 	void setParent(Grid* parent);
 
-	int getStatus();
-	int getGridVal();
-	int getX();
-	int getY();
+	const char getStatus();
+	const char getGridVal();
+	const short getX();
+	const short getY();
 	Grid* getParent();
-	double getF();
-	double getG();
+	const float getF();
+	const float getG();
 };
 
 #endif _GRID_H_

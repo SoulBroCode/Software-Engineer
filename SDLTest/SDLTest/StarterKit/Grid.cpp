@@ -9,27 +9,27 @@ Grid::~Grid()
 {
 }
 
-void Grid::setStatus(int stat)
+void Grid::setStatus(const char &stat)
 {
 	_status = stat;
 }
 
-void Grid::setGridVal(int val)
+void Grid::setGridVal(const char &val)
 {
 	_value = val;
 }
 
-void Grid::setH(double H)
+void Grid::setH(const float &H)
 {
 	_H = H;
 }
 
-void Grid::setG(double G)
+void Grid::setG(const float &G)
 {
 	_G = G;
 }
 
-void Grid::setGridCoord(int x, int y)
+void Grid::setGridCoord(const int &x, const int &y)
 {
 	_x = x;
 	_y = y;
@@ -45,30 +45,30 @@ void Grid::setParent(Grid* parent)
 	_parentGrid = parent;
 }
 
-int Grid::getStatus()
+const char Grid::getStatus()
 {
 	return _status;
 }
 
-int Grid::getGridVal()
+const char Grid::getGridVal()
 {
 	return _value;
 }
 
-int Grid::getX()
+const short Grid::getX()
 {
 	return _x;
 }
-int Grid::getY()
+const short Grid::getY()
 {
 	return _y;
 }
-double Grid::getF()
+const float Grid::getF()
 {
 	return (_G + _H);
 }
 
-double Grid::getG()
+const float Grid::getG()
 {
 	return _G;
 }
