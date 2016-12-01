@@ -8,10 +8,10 @@
 class Map {
 private:
 	Grid **_grid;
-	int _width, _height;
-
+	int _mapWidth, _mapHeight;
+	float _gridWidth, _gridHeight;
 public:
-	Map(int width, int height);
+	Map(int mapWidth, int mapHeight, float gridWidth, float gridHeight, int defaulVal);
 	Map(int width, int height, int defaulVal);
 	~Map();
 

@@ -2,13 +2,14 @@
 #define _GRID_H_
 
 #include <math.h>
-#include "Misc.h"
 
 class Grid {
 private:
 	int _status;
 	int _value;
-	GridCoord _mapCoord;
+	int _x;
+	int _y;
+
 	Grid*	_parentGrid;
 
 	double _G;
@@ -22,12 +23,13 @@ public:
 	void setGridVal(int val);
 	void setH(double H);
 	void setG(double G);
-	void setGridCoord(GridCoord coord);
+	void setGridCoord(int x, int y);
 	void setParent(Grid* parent);
 
 	int getStatus();
 	int getGridVal();
-	GridCoord getGridCoord();
+	int getX();
+	int getY();
 	Grid* getParent();
 	double getF();
 	double getG();

@@ -86,7 +86,6 @@
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
-    <ClCompile Include="Misc.cpp" />
     <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -97,7 +96,6 @@
     <ClInclude Include="GraphicsConst.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Map.h" />
-    <ClInclude Include="Misc.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Vector2D.h" />
   </ItemGroup>

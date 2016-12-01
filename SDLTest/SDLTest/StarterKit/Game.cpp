@@ -39,9 +39,13 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 			}
 		}
 
-		_baseMap = new Map(tileLengthCount, tileLengthCount, 1);
+		_baseMap = new Map(tileLengthCount, tileLengthCount, tileSize, tileSize, 1);
 		_baseMap->getGrid(tileLengthCount - 1, tileLengthCount - 1)->setGridVal(GRID_START);
 		_baseMap->getGrid(10, 0)->setGridVal(GRID_END);
+		_baseMap->getGrid(10, 1)->setGridVal(GRID_WALL);
+		_baseMap->getGrid(11, 1)->setGridVal(GRID_WALL);
+		_baseMap->getGrid(11, 0)->setGridVal(GRID_WALL);
+		_baseMap->getGrid(9, 1)->setGridVal(GRID_WALL);
 		_start = _baseMap->getStartGrid();
 		_end = _baseMap->getEndGrid();
 		Astar *algo = new Astar(_baseMap);

@@ -31,7 +31,7 @@ private:
 	SDL_Rect m_Destination;
 	SDL_Surface* m_p_Surface;
 	Tile* m_Tile;
-	const int mMaxTile = 900;
+	const int mMaxTile = 10000;
 	SDL_Rect* m_TileRect;
 
 	Map* _baseMap;

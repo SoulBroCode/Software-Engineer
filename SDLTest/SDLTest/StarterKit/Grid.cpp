@@ -29,10 +29,10 @@ void Grid::setG(double G)
 	_G = G;
 }
 
-void Grid::setGridCoord(GridCoord coord)
+void Grid::setGridCoord(int x, int y)
 {
-	_mapCoord.X = coord.X;
-	_mapCoord.Y = coord.Y;
+	_x = x;
+	_y = y;
 }
 
 Grid* Grid::getParent()
@@ -55,11 +55,14 @@ int Grid::getGridVal()
 	return _value;
 }
 
-GridCoord Grid::getGridCoord()
+int Grid::getX()
 {
-	return _mapCoord;
+	return _x;
 }
-
+int Grid::getY()
+{
+	return _y;
+}
 double Grid::getF()
 {
 	return (_G + _H);

@@ -16,10 +16,10 @@ double Astar::heuristicFunction(Grid current, Grid target)
 	double tmp = 0.0f;
 	// Manhattan Distance
 	if (_heuristicFunc == 1)
-		tmp = abs(target.getGridCoord().Y - current.getGridCoord().Y) + 
-			abs(target.getGridCoord().X - current.getGridCoord().X);
-	else tmp = sqrt((target.getGridCoord().Y - current.getGridCoord().Y)*(target.getGridCoord().Y - current.getGridCoord().Y) +
-			(target.getGridCoord().X - current.getGridCoord().X)*(target.getGridCoord().X - current.getGridCoord().X)); // Euclidean
+		tmp = abs(target.getY() - current.getY()) + 
+			abs(target.getX() - current.getX());
+	else tmp = sqrt((target.getY() - current.getY())*(target.getY() - current.getY()) +
+			(target.getX() - current.getX())*(target.getX() - current.getX())); // Euclidean
 
 	return tmp;
 }

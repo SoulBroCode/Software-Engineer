@@ -1,30 +1,35 @@
 #include "Map.h"
 
-Map::Map(int width, int height)
+Map::Map(int mapWidth, int mapHeight, float gridWidth, float gridHeight, int defaultVal) : 
+	_mapWidth(mapWidth), 
+	_mapHeight(mapHeight),
+	_gridWidth(gridWidth),
+	_gridHeight(gridHeight)
 {
-	_width = width;
-	_height = height;
-	_grid = new Grid*[_width];
-	for (int i = 0; i < _width; i++)
+	_grid = new Grid*[_mapWidth];
+	for (int i = 0; i < _mapWidth; i++)
 	{
-		_grid[i] = new Grid[_height];
-		for (int j = 0; j < _height; j++)
-			_grid[i][j].setGridCoord(GridCoord(i, j));
+		_grid[i] = new Grid[_mapHeight];
+		for (int j = 0; j < _mapHeight; j++)
+		{
+			_grid[i][j].setGridCoord(i, j);
+			_grid[i][j].setGridVal(defaultVal);
+		}
 	}
 	// (width, height)
 }
 
 Map::Map(int width, int height, int defaultVal)
 {
-	_width = width;
-	_height = height;
-	_grid = new Grid*[_width];
-	for (int i = 0; i < _width; i++)
+	_mapWidth = width;
+	_mapHeight = height;
+	_grid = new Grid*[_mapWidth];
+	for (int i = 0; i < _mapWidth; i++)
 	{
-		_grid[i] = new Grid[_height];
-		for (int j = 0; j < _height; j++)
+		_grid[i] = new Grid[_mapHeight];
+		for (int j = 0; j < _mapHeight; j++)
 		{
-			_grid[i][j].setGridCoord(GridCoord(i, j));
+			_grid[i][j].setGridCoord(i , j);
 			_grid[i][j].setGridVal(defaultVal);
 		}
 	}
@@ -33,15 +38,15 @@ Map::Map(int width, int height, int defaultVal)
 
 Map::~Map()
 {
-	for (int i = 0; i < _width; i++)
+	for (int i = 0; i < _mapWidth; i++)
 		delete[] _grid[i];
 	delete[] _grid;
 }
 
 void Map::resetMap()
 {
-	for (int i = 0; i < _width; i++)
-		for (int j = 0; j < _height; j++)
+	for (int i = 0; i < _mapWidth; i++)
+		for (int j = 0; j < _mapHeight; j++)
 			if (_grid[i][j].getGridVal() != 0)
 			{
 				_grid[i][j].setStatus(0);
@@ -53,8 +58,8 @@ void Map::resetMap()
 
 void Map::reinit()
 {
-	for (int i = 0; i < _width; i++)
-		for (int j = 0; j < _height; j++)
+	for (int i = 0; i < _mapWidth; i++)
+		for (int j = 0; j < _mapHeight; j++)
 		{
 			_grid[i][j].setStatus(0);
 			_grid[i][j].setGridVal(1);
@@ -68,8 +73,8 @@ void Map::setGridVal(int w, int h, int val)
 
 Grid* Map::getStartGrid()
 {
-	for (int i = 0; i < _width; i++)
-		for (int j = 0; j < _height; j++)
+	for (int i = 0; i < _mapWidth; i++)
+		for (int j = 0; j < _mapHeight; j++)
 			if (_grid[i][j].getGridVal() == GRID_START)
 				return &_grid[i][j];
 	return nullptr;
@@ -77,8 +82,8 @@ Grid* Map::getStartGrid()
 
 Grid* Map::getEndGrid()
 {
-	for (int i = 0; i < _width; i++)
-		for (int j = 0; j < _height; j++)
+	for (int i = 0; i < _mapWidth; i++)
+		for (int j = 0; j < _mapHeight; j++)
 			if (_grid[i][j].getGridVal() == GRID_END)
 				return &_grid[i][j];
 	return nullptr;
@@ -91,12 +96,12 @@ int Map::getGridVal(int w, int h)
 
 int Map::getWidth()
 {
-	return _width;
+	return _mapWidth;
 }
 
 int Map::getHeight()
 {
-	return _height;
+	return _mapHeight;
 }
 
 Grid* Map::getGrid(int w, int h)
@@ -113,9 +118,9 @@ Grid* Map::getNeighbor(Grid* current, int direction)
 	};
 
 	int n_w, n_h;
-	n_w = current->getGridCoord().X + _direction[direction*2];
-	n_h = current->getGridCoord().Y + _direction[direction*2 + 1];
-	if ( n_w < 0 || n_h < 0 || n_w >= _width || n_h >= _height 
+	n_w = current->getX() + _direction[direction*2];
+	n_h = current->getY() + _direction[direction*2 + 1];
+	if ( n_w < 0 || n_h < 0 || n_w >= _mapWidth || n_h >= _mapHeight 
 		|| _grid[n_w][n_h].getGridVal() == GRID_WALL)
 		return nullptr;
 	else
@@ -125,14 +130,14 @@ Grid* Map::getNeighbor(Grid* current, int direction)
 void Map::draw(SDL_Renderer *rend, int x0, int y0)
 {
 	
-	for (int j = 0; j < _height; j++)
-		for (int i = 0; i < _width; i++)
+	for (int j = 0; j < _mapHeight; j++)
+		for (int i = 0; i < _mapWidth; i++)
 		{
 			SDL_Rect* rect = new SDL_Rect();
-			rect->x = 30 * i;
-			rect->y = 30 * j;
-			rect->h = 30;
-			rect->w = 30;
+			rect->x = _gridWidth * i;
+			rect->y = _gridHeight * j;
+			rect->h = _gridWidth;
+			rect->w = _gridHeight;
 			SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
 			/*
 			if (_grid[i][j].getGridVal() == GRID_FIELD)
@@ -140,9 +145,11 @@ void Map::draw(SDL_Renderer *rend, int x0, int y0)
 				else if (_grid[i][j].getStatus() == GRID_STATUS_OPEN)
 				else 
 				*/
-			//if (_grid[i][j].getGridVal() == GRID_WALL)
-				//SDL_RenderDrawRect(rend, rect);
-			if (_grid[i][j].getGridVal() == GRID_END)
+			if (_grid[i][j].getGridVal() == GRID_WALL)
+			{
+				SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+			}
+			else if (_grid[i][j].getGridVal() == GRID_END)
 			{
 				SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
 			}
@@ -157,15 +164,16 @@ void Map::draw(SDL_Renderer *rend, int x0, int y0)
 			SDL_RenderFillRect(rend, rect);
 			SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 			SDL_RenderDrawRect(rend, rect);
+			delete rect;
 		}
 }
 
 // ================================
 void Map::debug_printGrid()
 {
-	for (int j = 0; j < _height; j++)
+	for (int j = 0; j < _mapHeight; j++)
 	{
-		for (int i = 0; i < _width; i++)
+		for (int i = 0; i < _mapWidth; i++)
 			std::cout << _grid[i][j].getGridVal() << " ";
 		std::cout << std::endl;
 	}

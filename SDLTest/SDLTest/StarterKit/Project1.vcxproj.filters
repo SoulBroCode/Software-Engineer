@@ -42,9 +42,6 @@
     <ClInclude Include="GraphicsConst.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Misc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -63,9 +60,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Map.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

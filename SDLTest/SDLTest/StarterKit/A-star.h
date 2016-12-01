@@ -2,7 +2,6 @@
 #define _A_STAR_H_
 
 #include "Map.h"
-#include "Misc.h"
 #include "GraphicsConst.h"
 #include <iostream>
 #include <algorithm>
