@@ -18,33 +18,43 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
-
+		std::srand(std::time(0));
 		DEBUG_MSG("SDL Init success");
 		_window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
 		
 	
 		float tileSize = 30;
-		float mapWidth;
+		int mapWidth;
+		int spawnRegionOffset;
+		int walls;
+		int wallLenght;
 		_gameStage = GAME_STAGE_3;
 		if (_gameStage == GAME_STAGE_1)
 		{
 			mapWidth = 30;
+			walls = 3;
+			wallLenght = 25;
+			
 		}
 		else if (_gameStage == GAME_STAGE_2) {
 			mapWidth = 100;
+			walls = 6;
+			wallLenght = 90;
 		}
 		else {
 			mapWidth = 1000;
+			walls = 18;
+			wallLenght = 25;
 		}
-		
+		spawnRegionOffset = mapWidth / (walls*2);
 
 		_baseMap = new Map(mapWidth, mapWidth, tileSize, tileSize, 1);
-		_baseMap->getGrid(mapWidth - 1, mapWidth - 1)->setGridVal(GRID_START);
-		_baseMap->getGrid(10, 0)->setGridVal(GRID_END);
-		_baseMap->getGrid(10, 1)->setGridVal(GRID_WALL);
-		_baseMap->getGrid(11, 1)->setGridVal(GRID_WALL);
-		_baseMap->getGrid(11, 0)->setGridVal(GRID_WALL);
-		_baseMap->getGrid(9, 1)->setGridVal(GRID_WALL);
+
+		_baseMap->getGrid(mapWidth - 2, mapWidth - 2)->setGridVal(GRID_START);
+		_baseMap->getGrid(1, 1)->setGridVal(GRID_END);
+
+		_baseMap->generateWall(walls, spawnRegionOffset, wallLenght);
+
 		_start = _baseMap->getStartGrid();
 		_end = _baseMap->getEndGrid();
 		Astar *algo = new Astar(_baseMap);
@@ -186,5 +196,15 @@ void Game::CleanUp()
 	SDL_Quit();
 }
 
+void Game::GenerateWall(int wallCount, int mapWidth) 
+{
+	for (int i = 0; i < mapWidth; i++) 
+	{
+		for (int j = 0; j < mapWidth; j++)
+		{
+
+		}
+	}
+}
 
 

@@ -43,6 +43,62 @@ Map::~Map()
 		delete[] _grid[i];
 	delete[] _grid;
 }
+void Map::generateWall(int wallCount , int spawnRegionOffset, int wallLenght)
+{
+
+
+
+	for (int i = 0; i < _mapWidth; i++)
+		for (int j = 0; j < _mapHeight; j++)
+		{
+			//generate border walls
+			if (i == 0 || j == 0 || i == _mapHeight - 1 || j == _mapWidth - 1) {
+				_grid[i][j].setGridVal(GRID_WALL);
+			}
+		
+			
+		}
+
+	//generate walls
+	std::vector<int> wallPosition;
+	int k = 0;
+	while (k < wallCount)
+	{
+		int x = (rand() % (_mapWidth - spawnRegionOffset * 2)) + spawnRegionOffset;
+		bool nextToOtherWall = false;
+		for (int i = 0; i < wallPosition.size(); i++)
+		{
+			if (x == wallPosition[i] || x == wallPosition[i] - 1 || x == wallPosition[i] + 1) {
+				nextToOtherWall = true;
+			}
+		
+		}
+		if (!nextToOtherWall)
+		{
+			if (rand() % 2 == 0)
+			{
+				for (int y = 1; y < wallLenght; y++)
+				{
+					_grid[x][y].setGridVal(GRID_WALL);
+				}
+			}
+			else
+			{
+				for (int y = _mapHeight - wallLenght; y < _mapHeight; y++)
+				{
+
+					_grid[x][y].setGridVal(GRID_WALL);
+				}
+			}
+			k++;
+			wallPosition.push_back(x);
+		}
+
+		
+		
+	}
+	
+}
 
 void Map::resetMap()
 {
@@ -132,9 +188,9 @@ void Map::draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned
 {
 	int maxOffsetX = offsetX + 30;
 	int maxOffsetY = offsetY + 30;
-	for (int j = 0; j < maxOffsetY; j++)
+	for (int j = offsetY; j < maxOffsetY; j++)
 	{
-		for (int i = 0; i < maxOffsetX; i++)
+		for (int i = offsetX; i < maxOffsetX; i++)
 		{
 			SDL_Rect* rect = new SDL_Rect();
 			//translation of 

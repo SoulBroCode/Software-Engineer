@@ -6,7 +6,7 @@
 #include "Map.h"
 #include "A-star.h"
 #include "SDL_image.h"
-
+#include <ctime>
 class Game
 {
 public:
@@ -20,9 +20,7 @@ public:
 	void HandleEvents();
 	bool IsRunning();
 	void CleanUp();
-	void set_pixel(SDL_Renderer *rend, int x, int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
-	void draw_circle(SDL_Renderer *surface, int n_cx, int n_cy, int radius, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
-	void fill_circle(SDL_Renderer *surface, int cx, int cy, int radius, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+	void GenerateWall(int wallCount, int mapWidth);
 private:
 	bool _loopRunning;
 	SDL_Window* _window;

@@ -5,6 +5,8 @@
 #include "GraphicsConst.h"
 #include "Grid.h"
 #include "SDL.h"
+#include <vector>
+
 class Map {
 private:
 	Grid **_grid;
@@ -15,6 +17,7 @@ public:
 	Map(const int &width, const int &height, const int &defaulVal);
 	~Map();
 
+	void generateWall(int wallCount, int spawnRegionOffset, int wallLenght);
 	void resetMap();
 	void reinit();
 	void setGridVal(const int &w,const int &h, const int &val);
