@@ -47,9 +47,9 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		_baseMap->getGrid(9, 1)->setGridVal(GRID_WALL);
 		_start = _baseMap->getStartGrid();
 		_end = _baseMap->getEndGrid();
-		//Astar *algo = new Astar(_baseMap);
-		//algo->setHeuristicFunc(_heuFunc);
-		//algo->findPath(_start, _end);
+		Astar *algo = new Astar(_baseMap);
+		algo->setHeuristicFunc(_heuFunc);
+		algo->findPath(_start, _end);
 
 		if(_window != nullptr)
 		{

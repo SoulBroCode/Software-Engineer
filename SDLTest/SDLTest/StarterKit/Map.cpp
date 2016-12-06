@@ -132,12 +132,14 @@ void Map::draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned
 {
 	int maxOffsetX = offsetX + 30;
 	int maxOffsetY = offsetY + 30;
-	for (int j = offsetX; j < maxOffsetX; j++)
-		for (int i = offsetY; i < maxOffsetY; i++)
+	for (int j = 0; j < maxOffsetY; j++)
+	{
+		for (int i = 0; i < maxOffsetX; i++)
 		{
 			SDL_Rect* rect = new SDL_Rect();
-			rect->x = _gridWidth * i;
-			rect->y = _gridHeight * j;
+			//translation of 
+			rect->x = _gridWidth * i - _gridWidth * offsetX;
+			rect->y = _gridHeight * j - _gridWidth * offsetY;
 			rect->h = _gridWidth;
 			rect->w = _gridHeight;
 			SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
@@ -145,7 +147,7 @@ void Map::draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned
 			if (_grid[i][j].getGridVal() == GRID_FIELD)
 				if (_grid[i][j].getStatus() == GRID_STATUS_FREE)
 				else if (_grid[i][j].getStatus() == GRID_STATUS_OPEN)
-				else 
+				else
 				*/
 			if (_grid[i][j].getGridVal() == GRID_WALL)
 			{
@@ -168,6 +170,7 @@ void Map::draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned
 			SDL_RenderDrawRect(rend, rect);
 			delete rect;
 		}
+	}
 }
 
 // ================================
