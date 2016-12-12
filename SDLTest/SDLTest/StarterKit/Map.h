@@ -19,6 +19,7 @@ public:
 
 	void generateWall(int wallCount, int spawnRegionOffset, int wallLenght);
 	void resetMap();
+	void resetStatus();
 	void reinit();
 	void setGridVal(const int &w,const int &h, const int &val);
 

@@ -113,6 +113,14 @@ void Map::resetMap()
 			}
 }
 
+void Map::resetStatus()
+{
+	for (int i = 0; i < _mapWidth; i++)
+		for (int j = 0; j < _mapHeight; j++)
+			_grid[i][j].setStatus(0);
+			
+}
+
 void Map::reinit()
 {
 	for (int i = 0; i < _mapWidth; i++)
@@ -177,8 +185,9 @@ Grid* Map::getNeighbor(Grid* current, const int &direction)
 	int n_w, n_h;
 	n_w = current->getX() + _direction[direction*2];
 	n_h = current->getY() + _direction[direction*2 + 1];
+	char gridVal = _grid[n_w][n_h].getGridVal();
 	if ( n_w < 0 || n_h < 0 || n_w >= _mapWidth || n_h >= _mapHeight 
-		|| _grid[n_w][n_h].getGridVal() == GRID_WALL)
+		|| gridVal == GRID_WALL || gridVal == GRID_PATH)
 		return nullptr;
 	else
 		return &_grid[n_w][n_h];
@@ -186,8 +195,8 @@ Grid* Map::getNeighbor(Grid* current, const int &direction)
 
 void Map::draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned short &offsetY)
 {
-	int maxOffsetX = offsetX + 30;
-	int maxOffsetY = offsetY + 30;
+	int maxOffsetX = offsetX + 100;
+	int maxOffsetY = offsetY + 100;
 	for (int j = offsetY; j < maxOffsetY; j++)
 	{
 		for (int i = offsetX; i < maxOffsetX; i++)
@@ -207,7 +216,7 @@ void Map::draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned
 				*/
 			if (_grid[i][j].getGridVal() == GRID_WALL)
 			{
-				SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+				SDL_SetRenderDrawColor(rend, 125, 125, 125, 255);
 			}
 			else if (_grid[i][j].getGridVal() == GRID_END)
 			{
@@ -219,7 +228,7 @@ void Map::draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned
 			}
 			else if (_grid[i][j].getGridVal() == GRID_PATH)
 			{
-				SDL_SetRenderDrawColor(rend, 125, 125, 125, 255);
+				SDL_SetRenderDrawColor(rend, 0, 0, 125, 255);
 			}
 			SDL_RenderFillRect(rend, rect);
 			SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);

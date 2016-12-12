@@ -24,10 +24,16 @@ double Astar::heuristicFunction(Grid current, Grid target)
 	return tmp;
 }
 
-int rebuildPath(Grid *start, Grid *end)
+int Astar::rebuildPath(Grid *start, Grid *end)
 {
-	if (end->getGridVal() != GRID_END && end->getGridVal() != GRID_START)
+	if (end->getGridVal() != GRID_END && end->getGridVal() != GRID_START) 
+	{
 		end->setGridVal(GRID_PATH);
+		Grid* path = new Grid();
+		path->init(end->getX(), end->getY());
+		paths.push_back(path);
+		//lete path;
+	}
 	if (start == end)
 		return 0;
 	else return (1 + rebuildPath(start, end->getParent()));
@@ -43,10 +49,12 @@ struct compare
 
 bool Astar::findPath(Grid *start, Grid *end)
 {
+	paths.clear();
 	std::priority_queue<Grid*, std::vector<Grid*>, compare > *open_list = new std::priority_queue<Grid*, std::vector<Grid*>, compare >();
 	// std::vector<Grid*> *close_list = new std::vector<Grid*>();
 
 	start->setStatus(GRID_STATUS_OPEN);
+
 	start->setG(0.0f);
 	double t = heuristicFunction(*start, *end);
 	start->setH(t);
@@ -79,10 +87,8 @@ bool Astar::findPath(Grid *start, Grid *end)
 			if (neighbor != nullptr)
 				if (neighbor->getStatus() != GRID_STATUS_CLOSE)
 				{
-					// Neu o nay chua o trong open_list
 					if (neighbor->getStatus() != GRID_STATUS_OPEN)
 					{
-						// Cho no vao open_list, tinh G, H
 						neighbor->setStatus(GRID_STATUS_OPEN);
 						neighbor->setG(current->getG() + 1.0f);
  						double tmp = heuristicFunction(*neighbor, *end);
@@ -91,15 +97,13 @@ bool Astar::findPath(Grid *start, Grid *end)
 
 						open_list->push(neighbor);
 					}
-					// Neu o nay o trong open_list
 					else {
-						// Tinh toan lai G, cap nhat G neu duong di nay tot hon
 						double tmp = current->getG() + 1.0f;
 						if (tmp < neighbor->getG())
 						{
 							neighbor->setG(tmp);
 							neighbor->setParent(current);
-							// Update minheap
+
 							std::make_heap(const_cast<Grid**>(&open_list->top()),
 								const_cast<Grid**>(&open_list->top()) + open_list->size(),
 								compare());

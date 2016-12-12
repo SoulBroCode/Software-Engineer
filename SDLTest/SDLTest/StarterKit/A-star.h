@@ -16,11 +16,14 @@ private:
 	int		  _mapWidth;
 	int		  _mapHeight;
 	int		  _heuristicFunc;
+	
 
 private:
+	int rebuildPath(Grid *start, Grid *end);
 	double heuristicFunction(Grid current, Grid target);
 
 public:
+	std::vector<Grid*> paths;
 	Astar(Map *refMap);
 	~Astar();
 

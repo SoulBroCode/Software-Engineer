@@ -18,17 +18,21 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
+		lock = SDL_CreateSemaphore(1);
+		lastTime = LTimer::gameTime();
+
 		std::srand(std::time(0));
 		DEBUG_MSG("SDL Init success");
 		_window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
 		
+		
 	
-		float tileSize = 30;
+		
 		int mapWidth;
 		int spawnRegionOffset;
 		int walls;
 		int wallLenght;
-		_gameStage = GAME_STAGE_3;
+		_gameStage = GAME_STAGE_2;
 		if (_gameStage == GAME_STAGE_1)
 		{
 			mapWidth = 30;
@@ -39,28 +43,69 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		else if (_gameStage == GAME_STAGE_2) {
 			mapWidth = 100;
 			walls = 6;
-			wallLenght = 90;
+			wallLenght = 0;
 		}
 		else {
 			mapWidth = 1000;
 			walls = 18;
-			wallLenght = 25;
+			wallLenght = 0;
 		}
 		spawnRegionOffset = mapWidth / (walls*2);
-
+		float tileSize = width / mapWidth;
+		//map
 		_baseMap = new Map(mapWidth, mapWidth, tileSize, tileSize, 1);
-
-		_baseMap->getGrid(mapWidth - 2, mapWidth - 2)->setGridVal(GRID_START);
-		_baseMap->getGrid(1, 1)->setGridVal(GRID_END);
-
 		_baseMap->generateWall(walls, spawnRegionOffset, wallLenght);
+		_baseMap->setGridVal(1, 1, GRID_END);
+		algo = new Astar(_baseMap);
+		//
+		for (int i = 0; i < 3; i++)
+		{
+			AI* ai = new AI();
+			ai->init(_baseMap);
+			_ai.push_back(ai);
+		}
 
-		_start = _baseMap->getStartGrid();
 		_end = _baseMap->getEndGrid();
-		Astar *algo = new Astar(_baseMap);
-		algo->setHeuristicFunc(_heuFunc);
-		algo->findPath(_start, _end);
 
+		/////////////////////AI////////////////////////
+		Grid* g1 = new Grid();
+		g1->init(mapWidth - 8, mapWidth - 2);
+
+	
+		_ai[0]->setStartGrid(g1);
+
+		algo->setHeuristicFunc(_heuFunc);
+		algo->findPath(_ai[0]->getStartGrid(), _end);
+		_ai[0]->setPath(algo->paths);
+		_ai[0]->TICKCONST = 400;
+		
+		
+		/////////////////////AI////////////////////////
+		_baseMap->resetStatus();
+
+
+		Grid* g2 = new Grid();
+		g2->init(mapWidth - 2, mapWidth - 2);
+
+		_ai[1]->setStartGrid(g2);
+		//_heuFunc = 0;
+		algo->setHeuristicFunc(_heuFunc);
+		algo->findPath(_ai[1]->getStartGrid(), _end);
+		_ai[1]->setPath(algo->paths);
+		_ai[1]->TICKCONST = 300;
+	
+		/////////////////////AI////////////////////////
+		Grid* g3 = new Grid();
+		g3->init(mapWidth - 20, mapWidth - 2);
+
+		_baseMap->setGridVal(mapWidth - 20, mapWidth - 2, GRID_START);
+		_ai[2]->setStartGrid(g3);
+
+		algo->setHeuristicFunc(_heuFunc);
+		algo->findPath(_ai[2]->getStartGrid(), _end);
+		_ai[2]->setPath(algo->paths);
+		_ai[2]->TICKCONST = 200;
+		
 		if(_window != nullptr)
 		{
 			DEBUG_MSG("Window creation success");
@@ -99,6 +144,17 @@ void Game::LoadContent()
 	DEBUG_MSG("Loading Content");
 }
 
+void Game::Update()
+{
+	unsigned int currentTime = LTimer::gameTime();//millis since game started
+	unsigned int deltaTime = currentTime - lastTime;//time since last update
+
+	_ai[0]->update(deltaTime);
+	_ai[1]->update(deltaTime);
+	_ai[2]->update(deltaTime);
+	lastTime = currentTime;	//save the curent time for next frame
+}
+
 void Game::Render()
 {
 	SDL_RenderClear(_renderer);
@@ -117,10 +173,7 @@ void Game::Render()
 	SDL_RenderPresent(_renderer);
 }
 
-void Game::Update()
-{
 
-}
 
 void Game::HandleEvents()
 {
@@ -160,13 +213,29 @@ void Game::HandleEvents()
 					DEBUG_MSG(_cameraOffsetY);
 					break;
 				case SDLK_LEFT:
+				{
 					DEBUG_MSG("Left Key Pressed");
-					//SDL_SetRenderDrawColor(m_p_Renderer, 0, 0, 255, 255);
+
 					break;
+				}
 				case SDLK_RIGHT:
+				{
 					DEBUG_MSG("Right Key Pressed");
-					//SDL_SetRenderDrawColor(m_p_Renderer, 255, 255, 255, 255);
+					
+					_end = _baseMap->getEndGrid();
+					_baseMap->getGrid(_end->getX(), _end->getY())->setGridVal(GRID_FIELD);
+					short posx = _end->getX() + 1;
+					_baseMap->getGrid(posx, _end->getY())->setGridVal(GRID_END);
+					_end = _baseMap->getEndGrid();
+					_baseMap->resetMap();
+
+					//algo->setHeuristicFunc(_heuFunc);
+				
+					for (std::vector<Grid*>::reverse_iterator it = algo->paths.rbegin(); it != algo->paths.rend(); ++it)
+						std::cout << "x: " << (*it)->getX() << ", y: " << (*it)->getY() << "\n";
+				
 					break;
+				}
 				default:
 					//SDL_SetRenderDrawColor(m_p_Renderer, 0, 0, 0, 255);
 					break;
@@ -208,3 +277,14 @@ void Game::GenerateWall(int wallCount, int mapWidth)
 }
 
 
+/*
+void example()
+{
+	//Lock
+	SDL_SemWait(lock);
+
+	
+
+	//Unlock
+	SDL_SemPost(lock);
+}*/

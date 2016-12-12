@@ -19,6 +19,7 @@ public:
 	Grid();
 	~Grid();
 	
+	void init(short x, short y);
 	void setStatus(const char &stat);
 	void setGridVal(const char &val);
 	void setH(const float &H);

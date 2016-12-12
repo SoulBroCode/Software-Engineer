@@ -9,6 +9,12 @@ Grid::~Grid()
 {
 }
 
+void Grid::init(short x, short y)
+{
+	_x = x;
+	_y = y;
+}
+
 void Grid::setStatus(const char &stat)
 {
 	_status = stat;
