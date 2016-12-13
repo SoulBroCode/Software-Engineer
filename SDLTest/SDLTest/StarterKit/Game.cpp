@@ -136,7 +136,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		else {
 			mapWidth = 1000;
 			walls = 18;
-			wallLenght = 0;
+			wallLenght = 500;
 		}
 		spawnRegionOffset = mapWidth / (walls*2);
 		float tileSize = 10;
@@ -205,8 +205,11 @@ void Game::InitializeAI(int width)
 	for (int i = 0; i < _maxAI; i++)
 	{
 		
-		int randomX = 5 + rand() % (width - 8);
-		int randomY = 5 + rand() % (width - 8);
+		//int randomX = 5 + rand() % (width - 8);
+		//int randomY = 5 + rand() % (width - 8);
+		int randomX = width - 2;
+		int randomY = width - 2;
+		std::cout << "(X : " << randomX << ",Y : " << randomY << ")";
 		AI* ai = new AI();
 		ai->init(_baseMap);
 		ai->setStartGrid(new Grid(randomX, randomY));

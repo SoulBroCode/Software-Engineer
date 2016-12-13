@@ -51,7 +51,7 @@ private:
 
 	Grid* _end;
 
-	const int _maxAI = 100;
+	const int _maxAI = 10;
 	std::vector<AI*> _ai;
 
 

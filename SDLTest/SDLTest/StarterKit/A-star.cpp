@@ -30,8 +30,8 @@ int Astar::rebuildPath(Grid *start, Grid *end)
 	{
 		end->setGridVal(GRID_PATH);
 		Grid* path = new Grid();
-		path->init(end->getX(), end->getY());
-		paths.push_back(path);
+		//path->init(end->getX(), end->getY());
+		//paths.push_back(path);
 		//lete path;
 	}
 	if (start == end)
@@ -49,9 +49,10 @@ struct compare
 
 bool Astar::findPath(Grid *start, Grid *end)
 {
-	paths.clear();
+	///paths.clear();
 	
 	std::priority_queue<Grid*, std::vector<Grid*>, compare > *open_list = new std::priority_queue<Grid*, std::vector<Grid*>, compare >();
+
 	// std::vector<Grid*> *close_list = new std::vector<Grid*>();
 
 	start->setStatus(GRID_STATUS_OPEN);
