@@ -1,6 +1,6 @@
 #include "AI.h"
 AI::AI() :
-	timeToMove(500),
+	timeToMove(300),
 	_finishPath(0)
 {
 }
@@ -11,6 +11,7 @@ AI::~AI()
 void AI::init(Map* map)
 {
 	_map = map;
+	TICKCONST = 20;
 }
 
 void AI::update(unsigned int deltatime)

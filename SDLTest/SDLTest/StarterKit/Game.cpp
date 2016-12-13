@@ -100,11 +100,13 @@ Game::~Game()
 {
 }
 
+
+
 bool Game::Initialize(const char* title, int xpos, int ypos, int width, int height, int flags)
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
-		
+		Camera *cam = Camera::getInstance();
 		lastTime = LTimer::gameTime();
 
 		std::srand(std::time(0));
@@ -118,7 +120,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		int spawnRegionOffset;
 		int walls;
 		int wallLenght;
-		_gameStage = GAME_STAGE_2;
+		_gameStage = GAME_STAGE_3;
 		if (_gameStage == GAME_STAGE_1)
 		{
 			mapWidth = 30;
@@ -137,71 +139,31 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 			wallLenght = 0;
 		}
 		spawnRegionOffset = mapWidth / (walls*2);
-		float tileSize = width / mapWidth;
+		float tileSize = 10;
+		cam->setMaxPosX(mapWidth - 10);
+		cam->setMaxPosX(mapWidth - 10);
 		//map
 		_baseMap = new Map(mapWidth, mapWidth, tileSize, tileSize, 1);
 		_baseMap->generateWall(walls, spawnRegionOffset, wallLenght);
-		_baseMap->setGridVal(1, 1, GRID_END);
+		
 		algo = new Astar(_baseMap);
 		//
-		for (int i = 0; i < 3; i++)
-		{
-
-			AI* ai = new AI();
-			ai->init(_baseMap);
-			_ai.push_back(ai);
-		}
-
-		_end = _baseMap->getEndGrid();
-
-		/////////////////////AI////////////////////////
-		Grid* g1 = new Grid();
-		g1->init(mapWidth - 8, mapWidth - 2);
-
-	
-		_ai[0]->setStartGrid(g1);
-
-		algo->setHeuristicFunc(_heuFunc);
-		algo->findPath(_ai[0]->getStartGrid(), _end);
-		_ai[0]->setPath(algo->paths);
-		_ai[0]->TICKCONST = 400;
 		
 		
-		/////////////////////AI////////////////////////
-		_baseMap->resetStatus();
+		InitializeAI(mapWidth);
 
-
-		Grid* g2 = new Grid();
-		g2->init(mapWidth - 2, mapWidth - 2);
-
-		_ai[1]->setStartGrid(g2);
-		//_heuFunc = 0;
-		algo->setHeuristicFunc(_heuFunc);
-		algo->findPath(_ai[1]->getStartGrid(), _end);
-		_ai[1]->setPath(algo->paths);
-		_ai[1]->TICKCONST = 300;
-	
-		/////////////////////AI////////////////////////
-		Grid* g3 = new Grid();
-		g3->init(mapWidth - 20, mapWidth - 2);
-
-		_baseMap->setGridVal(mapWidth - 20, mapWidth - 2, GRID_START);
-		_ai[2]->setStartGrid(g3);
-
-		algo->setHeuristicFunc(_heuFunc);
-		algo->findPath(_ai[2]->getStartGrid(), _end);
-		_ai[2]->setPath(algo->paths);
-		_ai[2]->TICKCONST = 200;
-
-		algo->test = 0;
 		
+
+		/////////////////////AI////////////////////////
+
 		lock = SDL_CreateSemaphore(2);
+		/*
 		threadA = SDL_CreateThread(thread_A, "1",algo);
-		threadA = SDL_CreateThread(thread_B, "2", algo);
-		threadA = SDL_CreateThread(thread_C, "3", algo);
-		threadA = SDL_CreateThread(thread_D, "4", algo);
-		threadA = SDL_CreateThread(thread_E, "5", algo); 
-		threadA = SDL_CreateThread(thread_F, "6", algo);
+		threadB = SDL_CreateThread(thread_B, "2", algo);
+		threadC = SDL_CreateThread(thread_C, "3", algo);
+		threadD = SDL_CreateThread(thread_D, "4", algo);
+		threadE = SDL_CreateThread(thread_E, "5", algo); 
+		threadF = SDL_CreateThread(thread_F, "6", algo);*/
 		if(_window != nullptr)
 		{
 			DEBUG_MSG("Window creation success");
@@ -233,7 +195,30 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 	return true;
 }
 
+void Game::InitializeAI(int width)
+{
+	_baseMap->setGridVal(1, 1, GRID_END);
+	_end = _baseMap->getEndGrid();
+	//_baseMap->setGridVal(width - 1, width - 1, GRID_START);
+	//Grid* start = _baseMap->getStartGrid();
+	
+	for (int i = 0; i < _maxAI; i++)
+	{
+		
+		int randomX = 5 + rand() % (width - 8);
+		int randomY = 5 + rand() % (width - 8);
+		AI* ai = new AI();
+		ai->init(_baseMap);
+		ai->setStartGrid(new Grid(randomX, randomY));
 
+		algo->setHeuristicFunc(_heuFunc);
+		algo->findPath(ai->getStartGrid(), _end);
+		ai->setPath(algo->paths);
+		_ai.push_back(ai);
+		_baseMap->resetStatus();
+	}
+
+}
 
 void Game::LoadContent()
 {
@@ -244,10 +229,10 @@ void Game::Update()
 {
 	unsigned int currentTime = LTimer::gameTime();//millis since game started
 	unsigned int deltaTime = currentTime - lastTime;//time since last update
-
-	_ai[0]->update(deltaTime);
-	_ai[1]->update(deltaTime);
-	_ai[2]->update(deltaTime);
+	for (int i = 0; i < _maxAI; i++)
+	{
+		_ai[i]->update(deltaTime);
+	}
 	lastTime = currentTime;	//save the curent time for next frame
 }
 
@@ -258,7 +243,7 @@ void Game::Render()
 	
 	SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
 
-	_baseMap->draw(_renderer, _cameraOffsetX, _cameraOffsetY);
+	_baseMap->draw(_renderer);
 
 
 
@@ -285,29 +270,49 @@ void Game::HandleEvents()
 					_loopRunning = false;
 					break;
 				case SDLK_a:
+				{
 					DEBUG_MSG("A Key Pressed");
-					if(_cameraOffsetX > 0)
-						_cameraOffsetX--;
-					DEBUG_MSG(_cameraOffsetX);
+					Camera *cam = Camera::getInstance();
+					unsigned short posX = cam->getPosX();
+					if (posX > 0)
+					{
+						cam->setPosX(--posX);
+					}
 					break;
+				}
 				case SDLK_d:
+				{
 					DEBUG_MSG("D Key Pressed");
-					if (_cameraOffsetX < 30000)
-						_cameraOffsetX++;
-					DEBUG_MSG(_cameraOffsetX);
+					Camera *cam = Camera::getInstance();
+					unsigned short posX = cam->getPosX();
+					if (posX < cam->getMaxPosX())
+					{
+						cam->setPosX(++posX);
+					}
 					break;
+				}
 				case SDLK_w:
+				{
 					DEBUG_MSG("W Key Pressed");
-					if (_cameraOffsetY > 0)
-						_cameraOffsetY--;
-					DEBUG_MSG(_cameraOffsetY);
+					Camera *cam = Camera::getInstance();
+					unsigned short posY = cam->getPosY();
+					if (posY > 0)
+					{
+						cam->setPosY(--posY);
+					}
 					break;
+				}
 				case SDLK_s:
+				{
 					DEBUG_MSG("S Key Pressed");
-					if (_cameraOffsetX < 30000)
-						_cameraOffsetY++;
-					DEBUG_MSG(_cameraOffsetY);
+					Camera *cam = Camera::getInstance();
+					unsigned short posY = cam->getPosY();
+					if (posY < cam->getMaxPosX())
+					{
+						cam->setPosY(++posY);
+					}
 					break;
+				}
 				case SDLK_LEFT:
 				{
 					DEBUG_MSG("Left Key Pressed");

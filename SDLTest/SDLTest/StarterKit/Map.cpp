@@ -187,33 +187,36 @@ Grid* Map::getNeighbor(Grid* current, const int &direction)
 	n_h = current->getY() + _direction[direction*2 + 1];
 	char gridVal = _grid[n_w][n_h].getGridVal();
 	if ( n_w < 0 || n_h < 0 || n_w >= _mapWidth || n_h >= _mapHeight 
-		|| gridVal == GRID_WALL || gridVal == GRID_PATH)
+		|| gridVal == GRID_WALL)
 		return nullptr;
 	else
 		return &_grid[n_w][n_h];
 }
 
-void Map::draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned short &offsetY)
+void Map::draw(SDL_Renderer *rend)
 {
-	int maxOffsetX = offsetX + 100;
-	int maxOffsetY = offsetY + 100;
-	for (int j = offsetY; j < maxOffsetY; j++)
+	Camera *cam = Camera::getInstance();
+	unsigned short camPosX = cam->getPosX();
+	unsigned short camPosY = cam->getPosY();
+	int maxOffsetX = camPosX + 100;
+	int maxOffsetY = camPosY + 100;
+	for (int j = camPosY; j < maxOffsetY; j++)
 	{
-		for (int i = offsetX; i < maxOffsetX; i++)
+		for (int i = camPosX; i < maxOffsetX; i++)
 		{
 			SDL_Rect* rect = new SDL_Rect();
 			//translation of 
-			rect->x = _gridWidth * i - _gridWidth * offsetX;
-			rect->y = _gridHeight * j - _gridWidth * offsetY;
+			rect->x = _gridWidth * i - _gridWidth * camPosX;
+			rect->y = _gridHeight * j - _gridWidth * camPosY;
 			rect->h = _gridWidth;
 			rect->w = _gridHeight;
 			SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
 			/*
 			if (_grid[i][j].getGridVal() == GRID_FIELD)
-				if (_grid[i][j].getStatus() == GRID_STATUS_FREE)
-				else if (_grid[i][j].getStatus() == GRID_STATUS_OPEN)
-				else
-				*/
+			if (_grid[i][j].getStatus() == GRID_STATUS_FREE)
+			else if (_grid[i][j].getStatus() == GRID_STATUS_OPEN)
+			else
+			*/
 			if (_grid[i][j].getGridVal() == GRID_WALL)
 			{
 				SDL_SetRenderDrawColor(rend, 125, 125, 125, 255);
@@ -228,7 +231,7 @@ void Map::draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned
 			}
 			else if (_grid[i][j].getGridVal() == GRID_PATH)
 			{
-				SDL_SetRenderDrawColor(rend, 0, 0, 125, 255);
+				SDL_SetRenderDrawColor(rend, 200, 200, 0, 255);
 			}
 			SDL_RenderFillRect(rend, rect);
 			SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);

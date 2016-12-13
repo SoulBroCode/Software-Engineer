@@ -50,6 +50,7 @@ struct compare
 bool Astar::findPath(Grid *start, Grid *end)
 {
 	paths.clear();
+	
 	std::priority_queue<Grid*, std::vector<Grid*>, compare > *open_list = new std::priority_queue<Grid*, std::vector<Grid*>, compare >();
 	// std::vector<Grid*> *close_list = new std::vector<Grid*>();
 

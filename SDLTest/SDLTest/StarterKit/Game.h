@@ -4,6 +4,7 @@
 #include <ctime>
 #include <SDL_image.h>
 
+#include "Camera.h"
 #include "Debug.h"
 #include "Grid.h"
 #include "Map.h"
@@ -31,6 +32,9 @@ public:
 	bool IsRunning();
 	void CleanUp();
 	void GenerateWall(int wallCount, int mapWidth);
+
+	void InitializeAI(int gameWidth);
+
 	static SDL_sem *lock;
 private:
 	
@@ -46,6 +50,8 @@ private:
 	Map* _baseMap;
 
 	Grid* _end;
+
+	const int _maxAI = 100;
 	std::vector<AI*> _ai;
 
 
@@ -57,6 +63,7 @@ private:
 	unsigned short _cameraOffsetY;
 
 	//The threads that will be used
+
 	SDL_Thread *threadA = NULL;
 	SDL_Thread *threadB = NULL;
 	SDL_Thread *threadC = NULL;

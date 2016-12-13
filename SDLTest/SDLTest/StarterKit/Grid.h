@@ -17,6 +17,7 @@ private:
 
 public:
 	Grid();
+	Grid(short x, short y);
 	~Grid();
 	
 	void init(short x, short y);

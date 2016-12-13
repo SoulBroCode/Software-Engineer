@@ -5,6 +5,7 @@
 #include "GraphicsConst.h"
 #include "Grid.h"
 #include "SDL.h"
+#include "Camera.h"
 #include <vector>
 
 class Map {
@@ -31,7 +32,7 @@ public:
 	Grid* getGrid(const int &w, const int &h);
 	Grid* getNeighbor(Grid* current,const int &direction);
 
-	void draw(SDL_Renderer *rend, const unsigned short &offsetX, const unsigned short &offsetY);
+	void draw(SDL_Renderer *rend);
 
 	// Debugging methods
 	void debug_printGrid();

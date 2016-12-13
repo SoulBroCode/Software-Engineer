@@ -4,10 +4,20 @@ Grid::Grid()
 {
 	_status = 0;
 }
+Grid::Grid(short x, short y) :
+	_status(0),
+	_x(x),
+	_y(y),
+	_value(0)
+{
+
+}
 
 Grid::~Grid()
 {
 }
+
+
 
 void Grid::init(short x, short y)
 {

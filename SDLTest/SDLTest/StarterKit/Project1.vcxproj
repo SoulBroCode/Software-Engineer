@@ -89,6 +89,7 @@
     <ClCompile Include="LTimer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MyThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="A-star.h" />
