@@ -6,6 +6,92 @@
 
 using namespace std;
 
+SDL_sem* Game::lock = NULL;
+int thread_A(void *data)
+{
+	Astar *algo = static_cast<Astar*>(data);
+	while (true)
+	{	
+		SDL_SemWait(Game::lock);
+		algo->test++;
+		std::cout << "Thread 1 : " << algo->test  << "\n";
+		SDL_Delay(200);
+		SDL_SemPost(Game::lock);
+		
+	}
+	return 0;
+}
+
+int thread_B(void *data)
+{
+	Astar *algo = static_cast<Astar*>(data);
+	while (true)
+	{
+		SDL_SemWait(Game::lock);
+		algo->test++;
+		std::cout << "Thread 2 : " << algo->test << "\n";
+		SDL_Delay(200);
+		SDL_SemPost(Game::lock);
+	}
+	return 0;
+}
+
+int thread_C(void *data)
+{
+	Astar *algo = static_cast<Astar*>(data);
+	while (true)
+	{
+		SDL_SemWait(Game::lock);
+		algo->test++;
+		std::cout << "Thread 3 : " << algo->test << "\n";
+		SDL_Delay(200);
+		SDL_SemPost(Game::lock);
+	}
+	return 0;
+}
+int thread_D(void *data)
+{
+	Astar *algo = static_cast<Astar*>(data);
+	while (true)
+	{
+		SDL_SemWait(Game::lock);
+		algo->test++;
+		std::cout << "Thread 4 : " << algo->test << "\n";
+		SDL_Delay(200);
+		SDL_SemPost(Game::lock);
+	}
+	return 0;
+}
+
+int thread_E(void *data)
+{
+	Astar *algo = static_cast<Astar*>(data);
+	while (true)
+	{
+		SDL_SemWait(Game::lock);
+		algo->test++;
+		std::cout << "Thread 5 : " << algo->test << "\n";
+		SDL_Delay(200);
+		SDL_SemPost(Game::lock);
+	}
+	return 0;
+}
+
+int thread_F(void *data)
+{
+	Astar *algo = static_cast<Astar*>(data);
+	while (true)
+	{
+		SDL_SemWait(Game::lock);
+		algo->test++;
+		std::cout << "Thread 6 : " << algo->test << "\n";
+		SDL_Delay(200);
+		SDL_SemPost(Game::lock);
+	}
+	return 0;
+}
+
+
 Game::Game() : _loopRunning(false), _gameStage(1), _cameraOffsetX(0), _cameraOffsetY(0)
 {
 }
@@ -18,7 +104,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
-		lock = SDL_CreateSemaphore(1);
+		
 		lastTime = LTimer::gameTime();
 
 		std::srand(std::time(0));
@@ -60,6 +146,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		//
 		for (int i = 0; i < 3; i++)
 		{
+
 			AI* ai = new AI();
 			ai->init(_baseMap);
 			_ai.push_back(ai);
@@ -105,7 +192,16 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		algo->findPath(_ai[2]->getStartGrid(), _end);
 		_ai[2]->setPath(algo->paths);
 		_ai[2]->TICKCONST = 200;
+
+		algo->test = 0;
 		
+		lock = SDL_CreateSemaphore(2);
+		threadA = SDL_CreateThread(thread_A, "1",algo);
+		threadA = SDL_CreateThread(thread_B, "2", algo);
+		threadA = SDL_CreateThread(thread_C, "3", algo);
+		threadA = SDL_CreateThread(thread_D, "4", algo);
+		threadA = SDL_CreateThread(thread_E, "5", algo); 
+		threadA = SDL_CreateThread(thread_F, "6", algo);
 		if(_window != nullptr)
 		{
 			DEBUG_MSG("Window creation success");
@@ -275,6 +371,8 @@ void Game::GenerateWall(int wallCount, int mapWidth)
 		}
 	}
 }
+
+
 
 
 /*

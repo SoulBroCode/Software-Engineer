@@ -23,6 +23,7 @@ private:
 	double heuristicFunction(Grid current, Grid target);
 
 public:
+	int test;
 	std::vector<Grid*> paths;
 	Astar(Map *refMap);
 	~Astar();

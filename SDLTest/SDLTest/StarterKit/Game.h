@@ -1,14 +1,22 @@
 #ifndef GAME_H
 #define GAME_H
-#include "Debug.h"
 #include <SDL.h>
+#include <ctime>
+#include <SDL_image.h>
+
+#include "Debug.h"
 #include "Grid.h"
 #include "Map.h"
 #include "A-star.h"
-#include "SDL_image.h"
 #include "LTimer.h"
 #include "AI.h"
-#include <ctime>
+
+typedef struct {
+	int param1;
+	char param2;
+} ThreadData;
+
+
 class Game
 {
 public:
@@ -23,7 +31,10 @@ public:
 	bool IsRunning();
 	void CleanUp();
 	void GenerateWall(int wallCount, int mapWidth);
+	static SDL_sem *lock;
 private:
+	
+
 	bool _loopRunning;
 	unsigned int lastTime;//time of last update;
 
@@ -48,9 +59,13 @@ private:
 	//The threads that will be used
 	SDL_Thread *threadA = NULL;
 	SDL_Thread *threadB = NULL;
-
+	SDL_Thread *threadC = NULL;
+	SDL_Thread *threadD = NULL;
+	SDL_Thread *threadE = NULL;
+	SDL_Thread *threadF = NULL;
 	//The protective semaphore
-	SDL_sem *lock = NULL;
+	
+	bool quit = false;
 };
 
 #endif
