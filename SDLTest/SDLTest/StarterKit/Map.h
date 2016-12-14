@@ -22,6 +22,8 @@ public:
 	void resetMap();
 	void resetStatus();
 	void reinit();
+
+	void setGridWidth(float tilesize);
 	void setGridVal(const int &w,const int &h, const int &val);
 
 	const int getGridVal(const int &w, const int &h);

@@ -1,4 +1,4 @@
-#include <Game.h>
+#include "Game.h"
 #include <iostream>
 #include <thread>
 
@@ -111,6 +111,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 		std::srand(std::time(0));
 		DEBUG_MSG("SDL Init success");
+		screenSize = width;
 		_window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
 		
 		
@@ -164,49 +165,54 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 	return true;
 }
-void Game::InitializeLevel(int &mapWidth)
+void Game::InitializeLevel(int &mapWidth )
 {
 	Camera *cam = Camera::getInstance();
 
 	int spawnRegionOffset;
-	int walls;
-	int wallLenght;
+	int wallCount;
+	int wallSize;
+	float tileSize;
+
 	_gameStage = GAME_STAGE_1;
 	switch (_gameStage)
 	{
 	case GAME_STAGE_1:
 		mapWidth = 30;
-		walls = 3;
-		wallLenght = 25;
-		cam->setSize(mapWidth, mapWidth);
+		wallCount = 3;
+		wallSize = 25;
+		cam->setSize(mapWidth);
+		tileSize = screenSize / (float)cam->getSize();
 		break;
 	case GAME_STAGE_2:
 		mapWidth = 100;
-		walls = 6;
-		wallLenght = 0;
-		cam->setSize(mapWidth, mapWidth);
+		wallCount = 6;
+		wallSize = 70;
+		cam->setSize(mapWidth);
+		tileSize = screenSize / (float)cam->getSize();
 		break;
 	default:
 		mapWidth = 1000;
-		walls = 18;
-		wallLenght = 500;
-		cam->setSize(mapWidth, mapWidth);
+		wallCount = 18;
+		wallSize = 500;
+		cam->setSize(200);
+		tileSize = screenSize / 200;
 		break;
 	}
 	
-	spawnRegionOffset = mapWidth / (walls * 2);
-	float tileSize = 10;
+	spawnRegionOffset = mapWidth / (wallCount * 2);
+
 	
 	cam->setMaxPosX(mapWidth - 10);
 	cam->setMaxPosX(mapWidth - 10);
 
 	_baseMap = new Map(mapWidth, mapWidth, tileSize, tileSize, 1);
-	_baseMap->generateWall(walls, spawnRegionOffset, wallLenght);
+	_baseMap->generateWall(wallCount, spawnRegionOffset, wallSize);
 }
 void Game::InitializeAI(int width)
 {
 	algo = new Astar(_baseMap);
-	_baseMap->setGridVal(1, 1, GRID_END);
+	_baseMap->setGridVal(1, 98, GRID_END);
 	_end = _baseMap->getEndGrid();
 	//_baseMap->setGridVal(width - 1, width - 1, GRID_START);
 	//Grid* start = _baseMap->getStartGrid();
@@ -283,7 +289,6 @@ void Game::HandleEvents()
 					break;
 				case SDLK_a:
 				{
-					DEBUG_MSG("A Key Pressed");
 					Camera *cam = Camera::getInstance();
 					unsigned short posX = cam->getPosX();
 					if (posX > 0)
@@ -294,7 +299,6 @@ void Game::HandleEvents()
 				}
 				case SDLK_d:
 				{
-					DEBUG_MSG("D Key Pressed");
 					Camera *cam = Camera::getInstance();
 					unsigned short posX = cam->getPosX();
 					if (posX < cam->getMaxPosX())
@@ -305,7 +309,6 @@ void Game::HandleEvents()
 				}
 				case SDLK_w:
 				{
-					DEBUG_MSG("W Key Pressed");
 					Camera *cam = Camera::getInstance();
 					unsigned short posY = cam->getPosY();
 					if (posY > 0)
@@ -316,13 +319,32 @@ void Game::HandleEvents()
 				}
 				case SDLK_s:
 				{
-					DEBUG_MSG("S Key Pressed");
 					Camera *cam = Camera::getInstance();
 					unsigned short posY = cam->getPosY();
 					if (posY < cam->getMaxPosX())
 					{
 						cam->setPosY(++posY);
 					}
+					break;
+				}
+				case SDLK_q:
+				{
+					DEBUG_MSG("S Key Pressed");
+					Camera *cam = Camera::getInstance();
+					
+					cam->zoom(-100);
+					_baseMap->setGridWidth(screenSize / (float)cam->getSize());
+					
+					break;
+				}
+				case SDLK_e:
+				{
+					DEBUG_MSG("e Key Pressed");
+					Camera *cam = Camera::getInstance();
+
+					cam->zoom(100);
+					_baseMap->setGridWidth(screenSize / (float)cam->getSize());
+					DEBUG_MSG(cam->getSize());
 					break;
 				}
 				case SDLK_LEFT:
@@ -341,7 +363,7 @@ void Game::HandleEvents()
 					_baseMap->getGrid(posx, _end->getY())->setGridVal(GRID_END);
 					_end = _baseMap->getEndGrid();
 					_baseMap->resetMap();
-
+					
 					//algo->setHeuristicFunc(_heuFunc);
 				
 					for (std::vector<Grid*>::reverse_iterator it = algo->paths.rbegin(); it != algo->paths.rend(); ++it)

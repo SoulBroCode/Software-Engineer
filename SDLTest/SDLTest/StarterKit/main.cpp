@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <thread>
 #include <string>
@@ -6,7 +7,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include <Game.h>
+#include "Game.h"
 
 #include <iostream>
 #include <iomanip>
@@ -19,20 +20,20 @@ using namespace std;
 
 int main(int argc, char** argv){
 
-	DEBUG_MSG("Game Object Created");
+	
 
 	Game* game = new Game();
 
 
 	//Adjust screen positions as needed
-	DEBUG_MSG("Game Initialising");
-	game->Initialize("DGPP Skelatol",100,50,900,900, SDL_WINDOW_INPUT_FOCUS);
+	//DEBUG_MSG("Game Initialising");
+	game->Initialize("DGPP Skelatol",1200,0, 1200, 1200, SDL_WINDOW_INPUT_FOCUS);
 	
-	DEBUG_MSG("Loading Content");
+	//DEBUG_MSG("Loading Content");
 	game->LoadContent();
 
 
-	DEBUG_MSG("Game Loop Starting......");
+	//DEBUG_MSG("Game Loop Starting......");
 	while(game->IsRunning())
 	{
 		game->HandleEvents();
@@ -40,9 +41,9 @@ int main(int argc, char** argv){
 		game->Render();
 	}
 
-	DEBUG_MSG("Calling Cleanup");
+	//DEBUG_MSG("Calling Cleanup");
 	game->CleanUp();
 	game->UnloadContent();
 	
 	return 0;
-}
+};

@@ -11,7 +11,7 @@
 #include "A-star.h"
 #include "LTimer.h"
 #include "AI.h"
-#include "MyThreadPool.h"
+#include "ThreadPool.h"
 typedef struct {
 	int param1;
 	char param2;
@@ -38,7 +38,7 @@ public:
 
 	static SDL_sem *lock;
 private:
-	
+	int screenSize;
 
 	bool _loopRunning;
 	unsigned int lastTime;//time of last update;

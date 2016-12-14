@@ -136,6 +136,12 @@ void Map::setGridVal(const int &w, const int &h, const int &val)
 	_grid[w][h].setGridVal(val);
 }
 
+void Map::setGridWidth(float tilesize)
+{
+	_gridHeight = tilesize;
+	_gridWidth = tilesize;
+}
+
 Grid* Map::getStartGrid()
 {
 	for (int i = 0; i < _mapWidth; i++)
@@ -198,8 +204,8 @@ void Map::draw(SDL_Renderer *rend)
 	Camera *cam = Camera::getInstance();
 	unsigned short camPosX = cam->getPosX();
 	unsigned short camPosY = cam->getPosY();
-	int maxOffsetX = camPosX + cam->getSizeX();
-	int maxOffsetY = camPosY +cam->getSizeX();
+	int maxOffsetX = camPosX + cam->getSize();
+	int maxOffsetY = camPosY +cam->getSize();
 	for (int j = camPosY; j < maxOffsetY; j++)
 	{
 		for (int i = camPosX; i < maxOffsetX; i++)
@@ -210,7 +216,7 @@ void Map::draw(SDL_Renderer *rend)
 			rect->y = _gridHeight * j - _gridWidth * camPosY;
 			rect->h = _gridWidth;
 			rect->w = _gridHeight;
-			SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+			
 			/*
 			if (_grid[i][j].getGridVal() == GRID_FIELD)
 			if (_grid[i][j].getStatus() == GRID_STATUS_FREE)
@@ -229,13 +235,16 @@ void Map::draw(SDL_Renderer *rend)
 			{
 				SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
 			}
-			else if (_grid[i][j].getGridVal() == GRID_PATH)
+			else  if (_grid[i][j].getGridVal() == GRID_PATH)
 			{
 				SDL_SetRenderDrawColor(rend, 200, 200, 0, 255);
 			}
+			else {
+				SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+			}
 			SDL_RenderFillRect(rend, rect);
 			SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
-			SDL_RenderDrawRect(rend, rect);
+			//SDL_RenderDrawRect(rend, rect);
 			delete rect;
 		}
 	}

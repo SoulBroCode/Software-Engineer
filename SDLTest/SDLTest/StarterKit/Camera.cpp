@@ -15,8 +15,7 @@ Camera::Camera() :
 	_posY(0),
 	_maxPosX(0),
 	_maxPosY(0),
-	_sizeX(0),
-	_sizeY(0)
+	_size(0)
 {
 }
 
@@ -24,6 +23,12 @@ Camera::~Camera()
 {
 	delete instance;
 }
+
+void Camera::zoom(const short zoom)
+{
+	_size += zoom;
+}
+
 
 void Camera::setPosX(const unsigned short &posX)
 {
@@ -41,10 +46,9 @@ void Camera::setMaxPosY(const unsigned short &maxPosY)
 {
 	_maxPosY = maxPosY;
 }
-void Camera::setSize(const unsigned short &sizeX, const unsigned short &sizeY)
+void Camera::setSize(const unsigned short &size)
 {
-	_sizeX = sizeX;
-	_sizeY = sizeY;
+	_size = size;
 }
 
 
@@ -64,11 +68,7 @@ const unsigned short Camera::getMaxPosY()
 {
 	return _maxPosY;
 }
-const unsigned short Camera::getSizeX()
+const unsigned short Camera::getSize()
 {
-	return _sizeX;
-}
-const unsigned short Camera::getSizeY()
-{
-	return _sizeY;
+	return _size;
 }
