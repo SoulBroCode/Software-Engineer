@@ -34,9 +34,9 @@ static char GRID_END = 34;
 static char GRID_START = 17;
 static char GRID_PATH = 16;
 
-static char GAME_STAGE_1 = 1;
-static char GAME_STAGE_2 = 2;
-static char GAME_STAGE_3 = 3;
+static const char GAME_STAGE_1 = 1;
+static const char GAME_STAGE_2 = 2;
+static const char GAME_STAGE_3 = 3;
 
 
 //The dot dimensions

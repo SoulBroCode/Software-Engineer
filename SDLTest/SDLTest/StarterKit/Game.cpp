@@ -106,7 +106,7 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
-		Camera *cam = Camera::getInstance();
+		pool = new ThreadPool(1);
 		lastTime = LTimer::gameTime();
 
 		std::srand(std::time(0));
@@ -116,40 +116,10 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		
 	
 		
+		
+		
 		int mapWidth;
-		int spawnRegionOffset;
-		int walls;
-		int wallLenght;
-		_gameStage = GAME_STAGE_3;
-		if (_gameStage == GAME_STAGE_1)
-		{
-			mapWidth = 30;
-			walls = 3;
-			wallLenght = 25;
-			
-		}
-		else if (_gameStage == GAME_STAGE_2) {
-			mapWidth = 100;
-			walls = 6;
-			wallLenght = 0;
-		}
-		else {
-			mapWidth = 1000;
-			walls = 18;
-			wallLenght = 500;
-		}
-		spawnRegionOffset = mapWidth / (walls*2);
-		float tileSize = 10;
-		cam->setMaxPosX(mapWidth - 10);
-		cam->setMaxPosX(mapWidth - 10);
-		//map
-		_baseMap = new Map(mapWidth, mapWidth, tileSize, tileSize, 1);
-		_baseMap->generateWall(walls, spawnRegionOffset, wallLenght);
-		
-		algo = new Astar(_baseMap);
-		//
-		
-		
+		InitializeLevel(mapWidth);
 		InitializeAI(mapWidth);
 
 		
@@ -194,9 +164,48 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 
 	return true;
 }
+void Game::InitializeLevel(int &mapWidth)
+{
+	Camera *cam = Camera::getInstance();
 
+	int spawnRegionOffset;
+	int walls;
+	int wallLenght;
+	_gameStage = GAME_STAGE_1;
+	switch (_gameStage)
+	{
+	case GAME_STAGE_1:
+		mapWidth = 30;
+		walls = 3;
+		wallLenght = 25;
+		cam->setSize(mapWidth, mapWidth);
+		break;
+	case GAME_STAGE_2:
+		mapWidth = 100;
+		walls = 6;
+		wallLenght = 0;
+		cam->setSize(mapWidth, mapWidth);
+		break;
+	default:
+		mapWidth = 1000;
+		walls = 18;
+		wallLenght = 500;
+		cam->setSize(mapWidth, mapWidth);
+		break;
+	}
+	
+	spawnRegionOffset = mapWidth / (walls * 2);
+	float tileSize = 10;
+	
+	cam->setMaxPosX(mapWidth - 10);
+	cam->setMaxPosX(mapWidth - 10);
+
+	_baseMap = new Map(mapWidth, mapWidth, tileSize, tileSize, 1);
+	_baseMap->generateWall(walls, spawnRegionOffset, wallLenght);
+}
 void Game::InitializeAI(int width)
 {
+	algo = new Astar(_baseMap);
 	_baseMap->setGridVal(1, 1, GRID_END);
 	_end = _baseMap->getEndGrid();
 	//_baseMap->setGridVal(width - 1, width - 1, GRID_START);

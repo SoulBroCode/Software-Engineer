@@ -30,8 +30,8 @@ int Astar::rebuildPath(Grid *start, Grid *end)
 	{
 		end->setGridVal(GRID_PATH);
 		Grid* path = new Grid();
-		//path->init(end->getX(), end->getY());
-		//paths.push_back(path);
+		path->init(end->getX(), end->getY());
+		paths.push_back(path);
 		//lete path;
 	}
 	if (start == end)

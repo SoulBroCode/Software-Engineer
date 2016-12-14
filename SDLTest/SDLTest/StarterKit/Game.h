@@ -11,7 +11,7 @@
 #include "A-star.h"
 #include "LTimer.h"
 #include "AI.h"
-
+#include "MyThreadPool.h"
 typedef struct {
 	int param1;
 	char param2;
@@ -33,6 +33,7 @@ public:
 	void CleanUp();
 	void GenerateWall(int wallCount, int mapWidth);
 
+	void InitializeLevel(int &mapWidth);
 	void InitializeAI(int gameWidth);
 
 	static SDL_sem *lock;
@@ -51,7 +52,7 @@ private:
 
 	Grid* _end;
 
-	const int _maxAI = 10;
+	const int _maxAI = 1;
 	std::vector<AI*> _ai;
 
 
@@ -73,6 +74,8 @@ private:
 	//The protective semaphore
 	
 	bool quit = false;
+
+	ThreadPool *pool;
 };
 
 #endif

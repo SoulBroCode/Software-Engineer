@@ -198,8 +198,8 @@ void Map::draw(SDL_Renderer *rend)
 	Camera *cam = Camera::getInstance();
 	unsigned short camPosX = cam->getPosX();
 	unsigned short camPosY = cam->getPosY();
-	int maxOffsetX = camPosX + 100;
-	int maxOffsetY = camPosY + 100;
+	int maxOffsetX = camPosX + cam->getSizeX();
+	int maxOffsetY = camPosY +cam->getSizeX();
 	for (int j = camPosY; j < maxOffsetY; j++)
 	{
 		for (int i = camPosX; i < maxOffsetX; i++)

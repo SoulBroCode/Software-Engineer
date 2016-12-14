@@ -45,6 +45,9 @@
     <ClInclude Include="LTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -71,8 +74,8 @@
     <ClCompile Include="LTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MyThreadPool.cpp">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="ThreadPool.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
