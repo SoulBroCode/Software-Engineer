@@ -11,12 +11,13 @@
 #include "A-star.h"
 #include "LTimer.h"
 #include "AI.h"
-#include "ThreadPool.h"
-typedef struct {
-	int param1;
-	char param2;
-} ThreadData;
+#include "Player.h"
 
+
+typedef struct {
+	Astar* param1;
+	AI* param2;
+} ThreadData;
 
 class Game
 {
@@ -35,8 +36,14 @@ public:
 
 	void InitializeLevel(int &mapWidth);
 	void InitializeAI(int gameWidth);
-
+	
 	static SDL_sem *lock;
+	SDL_mutex *mutexLock;
+	Astar* _algo;
+	std::vector<AI*> _ai;
+	int _maxAI;
+	Player * _player;
+
 private:
 	int screenSize;
 
@@ -47,18 +54,18 @@ private:
 	SDL_Renderer* _renderer;
 
 	SDL_Surface* _surface;
-
+	
 	Map* _baseMap;
 
 	Grid* _end;
+	Grid* _start;
+	
+	
+	
 
-	const int _maxAI = 1;
-	std::vector<AI*> _ai;
-
-
-
+	
 	int	_heuFunc;
-	Astar *algo;
+	
 	char _gameStage;
 	unsigned short _cameraOffsetX;
 	unsigned short _cameraOffsetY;
@@ -67,15 +74,11 @@ private:
 
 	SDL_Thread *threadA = NULL;
 	SDL_Thread *threadB = NULL;
-	SDL_Thread *threadC = NULL;
-	SDL_Thread *threadD = NULL;
-	SDL_Thread *threadE = NULL;
-	SDL_Thread *threadF = NULL;
+
 	//The protective semaphore
 	
 	bool quit = false;
 
-	ThreadPool *pool;
 };
 
 #endif

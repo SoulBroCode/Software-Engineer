@@ -27,8 +27,8 @@ int main(int argc, char** argv){
 
 	//Adjust screen positions as needed
 	//DEBUG_MSG("Game Initialising");
-	game->Initialize("DGPP Skelatol",1200,0, 1200, 1200, SDL_WINDOW_INPUT_FOCUS);
-	
+	//game->Initialize("DGPP Skelatol",1200,0, 1200, 1200, SDL_WINDOW_INPUT_FOCUS);
+	game->Initialize("DGPP Skelatol", 900, 0, 900, 900, SDL_WINDOW_INPUT_FOCUS);
 	//DEBUG_MSG("Loading Content");
 	game->LoadContent();
 

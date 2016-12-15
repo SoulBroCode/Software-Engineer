@@ -9,87 +9,44 @@ using namespace std;
 SDL_sem* Game::lock = NULL;
 int thread_A(void *data)
 {
-	Astar *algo = static_cast<Astar*>(data);
+	Game *g = static_cast<Game*>(data);
+	
 	while (true)
 	{	
-		SDL_SemWait(Game::lock);
-		algo->test++;
-		std::cout << "Thread 1 : " << algo->test  << "\n";
-		SDL_Delay(200);
-		SDL_SemPost(Game::lock);
-		
+		SDL_LockMutex(g->mutexLock);
+		//critical section
+		SDL_UnlockMutex(g->mutexLock);
+		SDL_Delay(500);
+		if (g->_player->getMoving())
+		{
+			for (int i = 0; i < g->_maxAI; i++)
+			{
+
+				g->_ai[i]->setPath(g->_algo->findPath(g->_ai[i]->getX(), g->_ai[i]->getY(), g->_player->getX(), g->_player->getY()));
+				g->_ai[i]->ready();
+			}
+			g->_player->setMoving(false);
+		}
 	}
+	//for (int i = 0; i < 1; i++) {
+		//ai[i]->setPath(a->findPath(10,10, 1, 1));
+	//}
+	//std::cout << "thread one size is " << ai.size();
+	
 	return 0;
+
 }
 
-int thread_B(void *data)
-{
-	Astar *algo = static_cast<Astar*>(data);
-	while (true)
-	{
-		SDL_SemWait(Game::lock);
-		algo->test++;
-		std::cout << "Thread 2 : " << algo->test << "\n";
-		SDL_Delay(200);
-		SDL_SemPost(Game::lock);
-	}
-	return 0;
-}
 
-int thread_C(void *data)
-{
-	Astar *algo = static_cast<Astar*>(data);
-	while (true)
-	{
-		SDL_SemWait(Game::lock);
-		algo->test++;
-		std::cout << "Thread 3 : " << algo->test << "\n";
-		SDL_Delay(200);
-		SDL_SemPost(Game::lock);
-	}
-	return 0;
-}
-int thread_D(void *data)
-{
-	Astar *algo = static_cast<Astar*>(data);
-	while (true)
-	{
-		SDL_SemWait(Game::lock);
-		algo->test++;
-		std::cout << "Thread 4 : " << algo->test << "\n";
-		SDL_Delay(200);
-		SDL_SemPost(Game::lock);
-	}
-	return 0;
-}
 
-int thread_E(void *data)
-{
-	Astar *algo = static_cast<Astar*>(data);
-	while (true)
-	{
-		SDL_SemWait(Game::lock);
-		algo->test++;
-		std::cout << "Thread 5 : " << algo->test << "\n";
-		SDL_Delay(200);
-		SDL_SemPost(Game::lock);
-	}
-	return 0;
-}
-
-int thread_F(void *data)
-{
-	Astar *algo = static_cast<Astar*>(data);
-	while (true)
-	{
-		SDL_SemWait(Game::lock);
-		algo->test++;
-		std::cout << "Thread 6 : " << algo->test << "\n";
-		SDL_Delay(200);
-		SDL_SemPost(Game::lock);
-	}
-	return 0;
-}
+//Mutex
+//	SDL_LockMutex(_taskLock);
+//_tasks.push_back(job);
+//SDL_UnlockMutex(_taskLock);
+//
+//SDL_SemWait(Game::lock);
+//
+//SDL_SemPost(Game::lock);
 
 
 Game::Game() : _loopRunning(false), _gameStage(1), _cameraOffsetX(0), _cameraOffsetY(0)
@@ -106,14 +63,14 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
-		pool = new ThreadPool(1);
+		ThreadPool* _threadpool = ThreadPool::getInstance();
 		lastTime = LTimer::gameTime();
-
+		
 		std::srand(std::time(0));
 		DEBUG_MSG("SDL Init success");
 		screenSize = width;
 		_window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
-		
+
 		
 	
 		
@@ -122,15 +79,23 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		int mapWidth;
 		InitializeLevel(mapWidth);
 		InitializeAI(mapWidth);
-
+		/*
+		ThreadData *data= (ThreadData*)malloc(sizeof(ThreadData));
+		data->param2 = _algo;
+		data->param3 = _ai[0];
 		
 
+		sometest->param2 = _algo;
+		sometest->param3 = _ai[0];
+		testfuction(passfunction);*/
 		/////////////////////AI////////////////////////
 
 		lock = SDL_CreateSemaphore(2);
+		
+		threadA = SDL_CreateThread(thread_A, "1", this);
+		
+		//threadB = SDL_CreateThread(thread_B, "2", this);
 		/*
-		threadA = SDL_CreateThread(thread_A, "1",algo);
-		threadB = SDL_CreateThread(thread_B, "2", algo);
 		threadC = SDL_CreateThread(thread_C, "3", algo);
 		threadD = SDL_CreateThread(thread_D, "4", algo);
 		threadE = SDL_CreateThread(thread_E, "5", algo); 
@@ -174,29 +139,32 @@ void Game::InitializeLevel(int &mapWidth )
 	int wallSize;
 	float tileSize;
 
-	_gameStage = GAME_STAGE_1;
+	_gameStage = GAME_STAGE_3;
 	switch (_gameStage)
 	{
 	case GAME_STAGE_1:
 		mapWidth = 30;
+		_maxAI = 5;
 		wallCount = 3;
-		wallSize = 25;
+		wallSize = 20;		
 		cam->setSize(mapWidth);
 		tileSize = screenSize / (float)cam->getSize();
 		break;
 	case GAME_STAGE_2:
 		mapWidth = 100;
+		_maxAI = 20;
 		wallCount = 6;
-		wallSize = 70;
+		wallSize = 60;
 		cam->setSize(mapWidth);
 		tileSize = screenSize / (float)cam->getSize();
 		break;
 	default:
 		mapWidth = 1000;
 		wallCount = 18;
-		wallSize = 500;
-		cam->setSize(200);
-		tileSize = screenSize / 200;
+		wallSize = 600;
+		_maxAI = 7;
+		cam->setSize(100);
+		tileSize = screenSize / 100;
 		break;
 	}
 	
@@ -211,31 +179,69 @@ void Game::InitializeLevel(int &mapWidth )
 }
 void Game::InitializeAI(int width)
 {
-	algo = new Astar(_baseMap);
-	_baseMap->setGridVal(1, 98, GRID_END);
+	_baseMap->setGridVal(2, 2, GRID_END);
+	_player = new Player(_baseMap, 2, 2);
+	_algo = new Astar(_baseMap);
+	_algo->setHeuristicFunc(0);
+	for (int i = 0; i < _maxAI; i++)
+	{
+		short posX = 5 + rand() % (width - 8);
+		short posY = 5 + rand() % (width - 8);
+		//short posX = width - 2;
+		//short posY = width - 2;
+		AI* ai = new AI(_baseMap, posX, posY);
+		
+		//ai->setPath(_algo->findPath(posX, posY, 1, 1));
+		_ai.push_back(ai);
+	}
+	/*
+	_baseMap->setGridVal(1, 1, GRID_END);
 	_end = _baseMap->getEndGrid();
-	//_baseMap->setGridVal(width - 1, width - 1, GRID_START);
-	//Grid* start = _baseMap->getStartGrid();
+
+	_baseMap->setGridVal(1, 1, GRID_END);
+	_baseMap->setGridVal(width - 2, width - 2, GRID_START);
+	_start = _baseMap->getStartGrid();*/
+
 	
+	/*
 	for (int i = 0; i < _maxAI; i++)
 	{
 		
+		int randomX = 5 + rand() % (width - 2);
+		int randomY = 5 + rand() % (width - 2);
+		//int randomX = width - 2;
+		//int randomY = width - 2;
+		std::cout << "Position : (X : " << randomX << ",Y : " << randomY << ")\n";
+		AI* ai = new AI();
+		ai->init(_baseMap);
+		ai->setStartGrid(new Grid(randomX, randomY));
+		std::cout << "Generating A* Path for AI : "<< i << "\n" ;
+		algo->setHeuristicFunc(_heuFunc);
+		
+		ai->setPath(algo->findPath(randomX, randomY, 2, 2));
+		_ai.push_back(ai);
+		_baseMap->resetStatus();
+	}*/
+
+	/*
+	for (int i = 0; i < _maxAI; i++)
+	{
+
 		//int randomX = 5 + rand() % (width - 8);
 		//int randomY = 5 + rand() % (width - 8);
 		int randomX = width - 2;
 		int randomY = width - 2;
-		std::cout << "(X : " << randomX << ",Y : " << randomY << ")";
+		std::cout << "Position : (X : " << randomX << ",Y : " << randomY << ")\n";
 		AI* ai = new AI();
 		ai->init(_baseMap);
 		ai->setStartGrid(new Grid(randomX, randomY));
-
+		std::cout << "Generating A* Path for AI : " << i << "\n";
 		algo->setHeuristicFunc(_heuFunc);
-		algo->findPath(ai->getStartGrid(), _end);
+		algo->findPath(_start, _end);
 		ai->setPath(algo->paths);
 		_ai.push_back(ai);
 		_baseMap->resetStatus();
-	}
-
+	}*/
 }
 
 void Game::LoadContent()
@@ -251,6 +257,7 @@ void Game::Update()
 	{
 		_ai[i]->update(deltaTime);
 	}
+	_player->update(deltaTime);
 	lastTime = currentTime;	//save the curent time for next frame
 }
 
@@ -293,7 +300,7 @@ void Game::HandleEvents()
 					unsigned short posX = cam->getPosX();
 					if (posX > 0)
 					{
-						cam->setPosX(--posX);
+						cam->setPosX(posX -=10);
 					}
 					break;
 				}
@@ -303,7 +310,7 @@ void Game::HandleEvents()
 					unsigned short posX = cam->getPosX();
 					if (posX < cam->getMaxPosX())
 					{
-						cam->setPosX(++posX);
+						cam->setPosX(posX += 10);
 					}
 					break;
 				}
@@ -313,7 +320,7 @@ void Game::HandleEvents()
 					unsigned short posY = cam->getPosY();
 					if (posY > 0)
 					{
-						cam->setPosY(--posY);
+						cam->setPosY(posY -= 10);
 					}
 					break;
 				}
@@ -323,7 +330,7 @@ void Game::HandleEvents()
 					unsigned short posY = cam->getPosY();
 					if (posY < cam->getMaxPosX())
 					{
-						cam->setPosY(++posY);
+						cam->setPosY(posY += 10);
 					}
 					break;
 				}
@@ -332,7 +339,7 @@ void Game::HandleEvents()
 					DEBUG_MSG("S Key Pressed");
 					Camera *cam = Camera::getInstance();
 					
-					cam->zoom(-100);
+					cam->zoom(-1);
 					_baseMap->setGridWidth(screenSize / (float)cam->getSize());
 					
 					break;
@@ -342,7 +349,7 @@ void Game::HandleEvents()
 					DEBUG_MSG("e Key Pressed");
 					Camera *cam = Camera::getInstance();
 
-					cam->zoom(100);
+					cam->zoom(1);
 					_baseMap->setGridWidth(screenSize / (float)cam->getSize());
 					DEBUG_MSG(cam->getSize());
 					break;
@@ -366,8 +373,6 @@ void Game::HandleEvents()
 					
 					//algo->setHeuristicFunc(_heuFunc);
 				
-					for (std::vector<Grid*>::reverse_iterator it = algo->paths.rbegin(); it != algo->paths.rend(); ++it)
-						std::cout << "x: " << (*it)->getX() << ", y: " << (*it)->getY() << "\n";
 				
 					break;
 				}

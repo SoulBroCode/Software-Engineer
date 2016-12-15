@@ -12,22 +12,22 @@
 
 class Astar {
 private:
-	Map		  *_refMap;
+	Map*	  _refMap;
 	int		  _mapWidth;
 	int		  _mapHeight;
 	int		  _heuristicFunc;
+	Grid* _refToLastGrid;
 	
-
 private:
-	int rebuildPath(Grid *start, Grid *end);
+	void rebuildPath(std::vector<Grid*> &paths, Grid *start, Grid *end, int &loopCount);
 	double heuristicFunction(Grid current, Grid target);
-
+	std::vector<Grid*> paths;
 public:
 	int test;
-	std::vector<Grid*> paths;
-	Astar(Map *refMap);
+	
+	Astar(Map* _refMap);
 	~Astar();
-
+	const std::vector<Grid*>& findPath(short AIPosX, short AIPosY, short PlayerPosX, short PlayerPosY);
 	bool findPath(Grid *start, Grid *end);
 	void setHeuristicFunc(int num);
 };

@@ -1,4 +1,20 @@
 #include "Map.h"
+Map::Map(const Map &obj) {
+
+	_mapWidth = obj._mapWidth;
+	_mapHeight = obj._mapHeight;
+	_grid = new Grid*[_mapWidth];
+	for (int i = 0; i < _mapWidth; i++)
+	{
+		_grid[i] = new Grid[_mapHeight];
+
+		for (int j = 0; j < _mapHeight; j++)
+		{
+			_grid[i][j] = obj._grid[i][j];
+		}
+	}
+}
+
 
 Map::Map(const int &mapWidth, const int &mapHeight, const float &gridWidth, const float &gridHeight, const int &defaultVal) : 
 	_mapWidth(mapWidth), 

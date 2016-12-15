@@ -1,35 +1,47 @@
 #include "AI.h"
-AI::AI() :
-	timeToMove(300),
-	_finishPath(0)
+AI::AI()
 {
+}
+
+AI::AI(Map* map, short posX, short posY) :
+	moveTimer(0),
+	_finishPath(2)
+{
+	_mainMap = map;
+	_currentGrid = new Grid(posX, posY);
+	TIME_TO_MOVE = 200;
 }
 AI::~AI()
 {
 }
 
-void AI::init(Map* map)
-{
-	_map = map;
-	TICKCONST = 20;
-}
 
+void AI::addTask() {
+	ThreadPool *theadpool = ThreadPool::getInstance();
+	theadpool->addJob(ThreadPool::action);
+}
+void AI::ready()
+{
+	if(_finishPath != 1)
+		_finishPath = 0;
+	
+}
 void AI::update(unsigned int deltatime)
 {
 	if (_finishPath == 0)
 	{
-		timeToMove -= deltatime;
-		if (timeToMove < 0) {
-			timeToMove = TICKCONST;
+		moveTimer -= deltatime;
+		if (moveTimer < 0) {
+			moveTimer = TIME_TO_MOVE;
 			if (!_path.empty())
 			{
-				_map->setGridVal(_startGrid->getX(), _startGrid->getY(), GRID_FIELD);
-				_startGrid = _path.back();
+				_mainMap->setGridVal(_currentGrid->getX(), _currentGrid->getY(), GRID_FIELD);
+				_currentGrid = _path.back();
 				_path.pop_back();
-				_map->setGridVal(_startGrid->getX(), _startGrid->getY(), GRID_START);
+				_mainMap->setGridVal(_currentGrid->getX(), _currentGrid->getY(), GRID_START);
 			}
 			else {
-				_map->setGridVal(_startGrid->getX(), _startGrid->getY(), GRID_FIELD);
+				_mainMap->setGridVal(_currentGrid->getX(), _currentGrid->getY(), GRID_FIELD);
 				_finishPath = 1;
 			}
 		}
@@ -43,12 +55,16 @@ void AI::setPath(const std::vector<Grid*> &path)
 	_path = path;
 }
 
-void AI::setStartGrid(Grid* grid)
+void AI::setCurrentGrid(short int posX, short int posY)
 {
-	_startGrid = grid;
+	_currentGrid = new Grid(posX, posY);
 }
 
-Grid* AI::getStartGrid()
+short AI::getX()
 {
-	return _startGrid;
+	return _currentGrid->getX();
+}
+short AI::getY()
+{
+	return  _currentGrid->getY();
 }

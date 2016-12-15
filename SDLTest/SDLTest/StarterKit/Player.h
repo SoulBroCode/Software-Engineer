@@ -1,35 +1,34 @@
-#ifndef _AI_H_
-#define _AI_H_
+
+#ifndef _PLAYER_H_
+#define _PLAYER_H_
 
 #include <math.h>
 #include <vector>
 #include "Map.h"
 #include "ThreadPool.h"
 
-class AI {
+class Player {
 private:
 	Map* _mainMap;
 	Grid* _currentGrid;
 	std::vector<Grid*> _path;
-	
+	bool moving;
 	int moveTimer;
-	
-	char _finishPath;
-public:
 	int TIME_TO_MOVE;
-	AI();
-	AI(Map* map, short posX, short posY);
-	~AI();
+public:
 	
-	void ready();
-	void addTask();
-	void update(unsigned int deltatime);
+	Player();
+	Player(Map* map, short posX, short posY);
+	~Player();
 
-	void setPath(const std::vector<Grid*> &path);
 	void setCurrentGrid(short int posX, short int posY);
+	void update(unsigned int deltatime);
 
 	short getX();
 	short getY();
+
+	void setMoving(bool move);
+	bool getMoving();
 };
 
 #endif 

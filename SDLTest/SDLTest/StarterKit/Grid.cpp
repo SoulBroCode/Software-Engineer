@@ -1,4 +1,17 @@
 #include "Grid.h"
+Grid::Grid(const Grid &obj) {
+	_status = obj._status;
+	_value = obj._value;
+	_x = obj._x;
+	_y = obj._y;
+
+	Grid* _parentGrid = new Grid();
+	
+	_G = obj._G;
+	_H = obj._H;
+}
+
+
 
 Grid::Grid()
 {
