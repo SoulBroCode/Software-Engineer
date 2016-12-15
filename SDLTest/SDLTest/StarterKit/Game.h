@@ -14,6 +14,7 @@
 #include "Player.h"
 
 
+
 typedef struct {
 	Astar* param1;
 	AI* param2;

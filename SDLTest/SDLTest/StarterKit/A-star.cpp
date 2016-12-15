@@ -198,6 +198,9 @@ const std::vector<Grid*>& Astar::findPath( short AIPosX,short AIPosY, short Play
 				}
 			}
 
+			delete(open_list);
+			open_list = nullptr;
+
 			return paths;
 		}
 

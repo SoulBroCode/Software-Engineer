@@ -14,9 +14,6 @@ int thread_A(void *data)
 	while (true)
 	{	
 		SDL_LockMutex(g->mutexLock);
-		//critical section
-		SDL_UnlockMutex(g->mutexLock);
-		SDL_Delay(500);
 		if (g->_player->getMoving())
 		{
 			for (int i = 0; i < g->_maxAI; i++)
@@ -27,11 +24,10 @@ int thread_A(void *data)
 			}
 			g->_player->setMoving(false);
 		}
+		SDL_UnlockMutex(g->mutexLock);
 	}
-	//for (int i = 0; i < 1; i++) {
-		//ai[i]->setPath(a->findPath(10,10, 1, 1));
-	//}
-	//std::cout << "thread one size is " << ai.size();
+	
+
 	
 	return 0;
 
@@ -79,27 +75,11 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		int mapWidth;
 		InitializeLevel(mapWidth);
 		InitializeAI(mapWidth);
-		/*
-		ThreadData *data= (ThreadData*)malloc(sizeof(ThreadData));
-		data->param2 = _algo;
-		data->param3 = _ai[0];
-		
-
-		sometest->param2 = _algo;
-		sometest->param3 = _ai[0];
-		testfuction(passfunction);*/
-		/////////////////////AI////////////////////////
 
 		lock = SDL_CreateSemaphore(2);
 		
 		threadA = SDL_CreateThread(thread_A, "1", this);
-		
-		//threadB = SDL_CreateThread(thread_B, "2", this);
-		/*
-		threadC = SDL_CreateThread(thread_C, "3", algo);
-		threadD = SDL_CreateThread(thread_D, "4", algo);
-		threadE = SDL_CreateThread(thread_E, "5", algo); 
-		threadF = SDL_CreateThread(thread_F, "6", algo);*/
+
 		if(_window != nullptr)
 		{
 			DEBUG_MSG("Window creation success");
@@ -162,7 +142,7 @@ void Game::InitializeLevel(int &mapWidth )
 		mapWidth = 1000;
 		wallCount = 18;
 		wallSize = 600;
-		_maxAI = 7;
+		_maxAI = 1;
 		cam->setSize(100);
 		tileSize = screenSize / 100;
 		break;
@@ -187,61 +167,12 @@ void Game::InitializeAI(int width)
 	{
 		short posX = 5 + rand() % (width - 8);
 		short posY = 5 + rand() % (width - 8);
-		//short posX = width - 2;
-		//short posY = width - 2;
+
 		AI* ai = new AI(_baseMap, posX, posY);
-		
-		//ai->setPath(_algo->findPath(posX, posY, 1, 1));
+
 		_ai.push_back(ai);
 	}
-	/*
-	_baseMap->setGridVal(1, 1, GRID_END);
-	_end = _baseMap->getEndGrid();
 
-	_baseMap->setGridVal(1, 1, GRID_END);
-	_baseMap->setGridVal(width - 2, width - 2, GRID_START);
-	_start = _baseMap->getStartGrid();*/
-
-	
-	/*
-	for (int i = 0; i < _maxAI; i++)
-	{
-		
-		int randomX = 5 + rand() % (width - 2);
-		int randomY = 5 + rand() % (width - 2);
-		//int randomX = width - 2;
-		//int randomY = width - 2;
-		std::cout << "Position : (X : " << randomX << ",Y : " << randomY << ")\n";
-		AI* ai = new AI();
-		ai->init(_baseMap);
-		ai->setStartGrid(new Grid(randomX, randomY));
-		std::cout << "Generating A* Path for AI : "<< i << "\n" ;
-		algo->setHeuristicFunc(_heuFunc);
-		
-		ai->setPath(algo->findPath(randomX, randomY, 2, 2));
-		_ai.push_back(ai);
-		_baseMap->resetStatus();
-	}*/
-
-	/*
-	for (int i = 0; i < _maxAI; i++)
-	{
-
-		//int randomX = 5 + rand() % (width - 8);
-		//int randomY = 5 + rand() % (width - 8);
-		int randomX = width - 2;
-		int randomY = width - 2;
-		std::cout << "Position : (X : " << randomX << ",Y : " << randomY << ")\n";
-		AI* ai = new AI();
-		ai->init(_baseMap);
-		ai->setStartGrid(new Grid(randomX, randomY));
-		std::cout << "Generating A* Path for AI : " << i << "\n";
-		algo->setHeuristicFunc(_heuFunc);
-		algo->findPath(_start, _end);
-		ai->setPath(algo->paths);
-		_ai.push_back(ai);
-		_baseMap->resetStatus();
-	}*/
 }
 
 void Game::LoadContent()

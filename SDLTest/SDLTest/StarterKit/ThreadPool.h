@@ -32,18 +32,11 @@ public:
 	
 
 
-	void addJob(std::function<void(void* data)> job) {
-		SDL_LockMutex(_taskLock);
-		_tasks.push_back(job);
-		SDL_UnlockMutex(_taskLock);
-	}
+	void addJob(std::function<void(void* data)> job);
 
-	std::function<void(void*)> getTask()
-	{
-		std::function<void(void*)> task = _tasks[0];
-		_tasks.erase(_tasks.begin());
-		return task;
-	}
+
+	std::function<void(void*)> getTask();
+
 
 	static void action(void *data)
 	{
