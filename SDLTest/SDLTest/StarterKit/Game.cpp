@@ -139,7 +139,7 @@ void Game::InitializeLevel(int &mapWidth )
 	int wallSize;
 	float tileSize;
 
-	_gameStage = GAME_STAGE_3;
+	_gameStage = GAME_STAGE_2;
 	switch (_gameStage)
 	{
 	case GAME_STAGE_1:
