@@ -45,7 +45,7 @@ int thread_A(void *data)
 //SDL_SemPost(Game::lock);
 
 
-Game::Game() : _loopRunning(false), _gameStage(1), _cameraOffsetX(0), _cameraOffsetY(0)
+Game::Game() : mLevel(Level::One),mLoopRunning(false)
 {
 }
 
@@ -55,7 +55,7 @@ Game::~Game()
 
 
 
-bool Game::Initialize(const char* title, int xpos, int ypos, int width, int height, int flags)
+bool Game::init(const char* title, int xpos, int ypos, int width, int height, int flags)
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
@@ -64,17 +64,17 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		
 		std::srand(std::time(0));
 		DEBUG_MSG("SDL Init success");
-		screenSize = width;
+		mScreenSize = width;
 		_window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
 
-		
+	
 	
 		
 		
 		
-		int mapWidth;
-		InitializeLevel(mapWidth);
-		InitializeAI(mapWidth);
+		int mapSize;
+		initLevel(mapSize);
+		InitAI(mapSize);
 
 		lock = SDL_CreateSemaphore(2);
 		
@@ -106,58 +106,79 @@ bool Game::Initialize(const char* title, int xpos, int ypos, int width, int heig
 		DEBUG_MSG("SDL init fail");
 		return false;
 	}
-	_loopRunning = true;
+	mLoopRunning = true;
 
 	return true;
 }
-void Game::InitializeLevel(int &mapWidth )
+void Game::initLevel(int &mapSize )
 {
-	Camera *cam = Camera::getInstance();
+	Camera* cam = Camera::getInstance();
 
 	int spawnRegionOffset;
 	int wallCount;
 	int wallSize;
 	float tileSize;
 
-	_gameStage = GAME_STAGE_2;
-	switch (_gameStage)
+	//mLevel = Level::One;
+	switch (mLevel)
 	{
-	case GAME_STAGE_1:
-		mapWidth = 30;
+	case Level::One:
+		mapSize = 30;
 		_maxAI = 5;
 		wallCount = 3;
-		wallSize = 20;		
-		cam->setSize(mapWidth);
-		tileSize = screenSize / (float)cam->getSize();
+		wallSize = 20;
+
+		cam->setSize(mapSize);
+		tileSize = mScreenSize / (float)cam->getSize();
 		break;
-	case GAME_STAGE_2:
-		mapWidth = 100;
+	case Level::Two:
+		mapSize = 100;
 		_maxAI = 20;
 		wallCount = 6;
 		wallSize = 60;
-		cam->setSize(mapWidth);
-		tileSize = screenSize / (float)cam->getSize();
+		cam->setSize(mapSize);
+		tileSize = mScreenSize / (float)cam->getSize();
 		break;
 	default:
-		mapWidth = 1000;
+		mapSize = 1000;
 		wallCount = 18;
 		wallSize = 600;
 		_maxAI = 1;
 		cam->setSize(100);
-		tileSize = screenSize / 100;
+		tileSize = mScreenSize / 100;
 		break;
 	}
 	
-	spawnRegionOffset = mapWidth / (wallCount * 2);
+	spawnRegionOffset = mapSize / (wallCount * 2);
 
-	
-	cam->setMaxPosX(mapWidth - 10);
-	cam->setMaxPosX(mapWidth - 10);
+	cam->setSize(mapSize);
+	cam->setMaxPosX(mapSize);
+	cam->setMaxPosY(mapSize);
 
-	_baseMap = new Map(mapWidth, mapWidth, tileSize, tileSize, 1);
+	_baseMap = new Map(mapSize, mapSize, tileSize, tileSize, 1);
 	_baseMap->generateWall(wallCount, spawnRegionOffset, wallSize);
 }
-void Game::InitializeAI(int width)
+
+#pragma region InitLevel
+void Game::InitLevelOne(int& wallCount, int& wallSize, float& tileSize)
+{
+	
+}
+
+void Game::InitLevelTwo()
+{
+
+}
+
+void Game::InitLevelThree()
+{
+
+}
+#pragma endregion
+
+
+
+void Game::InitAI(int width)
 {
 	_baseMap->setGridVal(2, 2, GRID_END);
 	_player = new Player(_baseMap, 2, 2);
@@ -175,12 +196,12 @@ void Game::InitializeAI(int width)
 
 }
 
-void Game::LoadContent()
+void Game::loadContent()
 {
 	DEBUG_MSG("Loading Content");
 }
 
-void Game::Update()
+void Game::update()
 {
 	unsigned int currentTime = LTimer::gameTime();//millis since game started
 	unsigned int deltaTime = currentTime - lastTime;//time since last update
@@ -192,7 +213,7 @@ void Game::Update()
 	lastTime = currentTime;	//save the curent time for next frame
 }
 
-void Game::Render()
+void Game::render()
 {
 	SDL_RenderClear(_renderer);
 
@@ -212,7 +233,7 @@ void Game::Render()
 
 
 
-void Game::HandleEvents()
+void Game::handleEvents()
 {
 	SDL_Event event;
 
@@ -223,7 +244,7 @@ void Game::HandleEvents()
 				switch(event.key.keysym.sym)
 				{
 				case SDLK_ESCAPE:
-					_loopRunning = false;
+					mLoopRunning = false;
 					break;
 				case SDLK_a:
 				{
@@ -239,7 +260,7 @@ void Game::HandleEvents()
 				{
 					Camera *cam = Camera::getInstance();
 					unsigned short posX = cam->getPosX();
-					if (posX < cam->getMaxPosX())
+					if (posX + cam->getSize() < cam->getMaxPosX())
 					{
 						cam->setPosX(posX += 10);
 					}
@@ -259,7 +280,7 @@ void Game::HandleEvents()
 				{
 					Camera *cam = Camera::getInstance();
 					unsigned short posY = cam->getPosY();
-					if (posY < cam->getMaxPosX())
+					if (posY + cam->getSize()< cam->getMaxPosX())
 					{
 						cam->setPosY(posY += 10);
 					}
@@ -271,7 +292,7 @@ void Game::HandleEvents()
 					Camera *cam = Camera::getInstance();
 					
 					cam->zoom(-1);
-					_baseMap->setGridWidth(screenSize / (float)cam->getSize());
+					_baseMap->setGridWidth(mScreenSize / (float)cam->getSize());
 					
 					break;
 				}
@@ -281,7 +302,7 @@ void Game::HandleEvents()
 					Camera *cam = Camera::getInstance();
 
 					cam->zoom(1);
-					_baseMap->setGridWidth(screenSize / (float)cam->getSize());
+					_baseMap->setGridWidth(mScreenSize / (float)cam->getSize());
 					DEBUG_MSG(cam->getSize());
 					break;
 				}
@@ -316,19 +337,19 @@ void Game::HandleEvents()
 
 
 
-bool Game::IsRunning()
+bool Game::isRunning()
 {
-	return _loopRunning;
+	return mLoopRunning;
 }
 
-void Game::UnloadContent()
+void Game::unloadContent()
 {
 	DEBUG_MSG("Unloading Content");
 	//delete(m_p_Texture);
 	//m_p_Texture = NULL;
 }
 
-void Game::CleanUp()
+void Game::cleanUp()
 {
 	DEBUG_MSG("Cleaning Up");
 	SDL_DestroyWindow(_window);
@@ -336,7 +357,7 @@ void Game::CleanUp()
 	SDL_Quit();
 }
 
-void Game::GenerateWall(int wallCount, int mapWidth) 
+void Game::generateWall(int wallCount, int mapWidth) 
 {
 	for (int i = 0; i < mapWidth; i++) 
 	{

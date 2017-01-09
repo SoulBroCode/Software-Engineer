@@ -20,23 +20,25 @@ typedef struct {
 	AI* param2;
 } ThreadData;
 
+
+
 class Game
 {
 public:
 	Game();
 	~Game();
-	bool Initialize(const char*, int, int, int, int, int);
-	void LoadContent();
-	void UnloadContent();
-	void Render();
-	void Update();
-	void HandleEvents();
-	bool IsRunning();
-	void CleanUp();
-	void GenerateWall(int wallCount, int mapWidth);
+	bool init(const char*, int, int, int, int, int);
+	void loadContent();
+	void unloadContent();
+	void render();
+	void update();
+	void handleEvents();
+	bool isRunning();
+	void cleanUp();
+	void generateWall(int wallCount, int mapWidth);
 
-	void InitializeLevel(int &mapWidth);
-	void InitializeAI(int gameWidth);
+	void initLevel(int &mapWidth);
+	void InitAI(int gameWidth);
 	
 	static SDL_sem *lock;
 	SDL_mutex *mutexLock;
@@ -46,30 +48,52 @@ public:
 	Player * _player;
 
 private:
-	int screenSize;
+	void InitLevelOne(int& wallCount, int& wallSize, float& tileSize);
+	void InitLevelTwo();
+	void InitLevelThree();
 
-	bool _loopRunning;
-	unsigned int lastTime;//time of last update;
+	enum Level
+	{
+		One,
+		Two,
+		Three
+	};
+	Level mLevel;
 
 	SDL_Window* _window;
 	SDL_Renderer* _renderer;
 
 	SDL_Surface* _surface;
-	
+
 	Map* _baseMap;
 
 	Grid* _end;
 	Grid* _start;
+
+	int mScreenSize;
+
+	int mEnemySpawnAreaMinX;
+	int mEnemySpawnAreaMinY;
+	int mEnemySpawnAreaMaxX;
+	int mEnemySpawnAreaMaxY;
+
+	int mPlayerSpawnAreaMinX;
+	int mPlayerSpawnAreaMinY;
+	int mPlayerSpawnAreaMaxX;
+	int mPlayerSpawnAreaMaxY;
+
+	bool mLoopRunning;
+	
+	unsigned int lastTime;//time of last update;
+
+	
 	
 	
 	
 
 	
 	int	_heuFunc;
-	
-	char _gameStage;
-	unsigned short _cameraOffsetX;
-	unsigned short _cameraOffsetY;
+
 
 	//The threads that will be used
 

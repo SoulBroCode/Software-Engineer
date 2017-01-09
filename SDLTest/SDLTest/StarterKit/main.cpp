@@ -28,22 +28,22 @@ int main(int argc, char** argv){
 	//Adjust screen positions as needed
 	//DEBUG_MSG("Game Initialising");
 	//game->Initialize("DGPP Skelatol",1200,0, 1200, 1200, SDL_WINDOW_INPUT_FOCUS);
-	game->Initialize("DGPP Skelatol", 900, 0, 900, 900, SDL_WINDOW_INPUT_FOCUS);
+	game->init("DGPP Skelatol", 900, 0, 900, 900, SDL_WINDOW_INPUT_FOCUS);
 	//DEBUG_MSG("Loading Content");
-	game->LoadContent();
+	game->loadContent();
 
 
 	//DEBUG_MSG("Game Loop Starting......");
-	while(game->IsRunning())
+	while(game->isRunning())
 	{
-		game->HandleEvents();
-		game->Update();
-		game->Render();
+		game->handleEvents();
+		game->update();
+		game->render();
 	}
 
 	//DEBUG_MSG("Calling Cleanup");
-	game->CleanUp();
-	game->UnloadContent();
+	game->cleanUp();
+	game->unloadContent();
 	
 	return 0;
 };
