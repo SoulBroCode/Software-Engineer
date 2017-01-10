@@ -36,6 +36,7 @@ public:
 	Grid* getParent();
 	const float getF();
 	const float getG();
+
 };
 
 #endif _GRID_H_

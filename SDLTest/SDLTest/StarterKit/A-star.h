@@ -28,8 +28,10 @@ public:
 	Astar(Map* _refMap);
 	~Astar();
 	const std::vector<Grid*>& findPath(short AIPosX, short AIPosY, short PlayerPosX, short PlayerPosY);
+	const std::vector<Grid*>& findPath(Map &map, short AIPosX, short AIPosY, short PlayerPosX, short PlayerPosY);
 	bool findPath(Grid *start, Grid *end);
 	void setHeuristicFunc(int num);
+
 };
 
 #endif _A_STAR_H_

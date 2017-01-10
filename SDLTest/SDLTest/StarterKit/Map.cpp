@@ -222,16 +222,18 @@ void Map::draw(SDL_Renderer *rend)
 	unsigned short camPosY = cam->getPosY();
 	int maxOffsetX = camPosX + cam->getSize();
 	int maxOffsetY = camPosY +cam->getSize();
+	
 	for (int j = camPosY; j < maxOffsetY; j++)
 	{
 		for (int i = camPosX; i < maxOffsetX; i++)
 		{
-			SDL_Rect* rect = new SDL_Rect();
+			/**/
+			SDL_Rect rect = SDL_Rect();
 			//translation of 
-			rect->x = _gridWidth * i - _gridWidth * camPosX;
-			rect->y = _gridHeight * j - _gridWidth * camPosY;
-			rect->h = _gridWidth;
-			rect->w = _gridHeight;
+			rect.x = _gridWidth * i - _gridWidth * camPosX;
+			rect.y = _gridHeight * j - _gridWidth * camPosY;
+			rect.h = _gridWidth;
+			rect.w = _gridHeight;
 			
 			/*
 			if (_grid[i][j].getGridVal() == GRID_FIELD)
@@ -258,12 +260,20 @@ void Map::draw(SDL_Renderer *rend)
 			else {
 				SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
 			}
-			SDL_RenderFillRect(rend, rect);
+			
+			if (SDL_RenderFillRect(rend, &rect) == -1)
+			{
+				int i = 0;
+			};
 			SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
-			//SDL_RenderDrawRect(rend, rect);
-			delete rect;
+		
+
 		}
 	}
+	
+
+	cam = NULL;
+	delete cam;
 }
 
 // ================================

@@ -34,6 +34,8 @@ void Astar::rebuildPath(std::vector<Grid*> &paths, Grid *start, Grid *end, int &
 		Grid* path = new Grid();
 		path->init(end->getX(), end->getY());
 		paths.push_back(path);
+		path = NULL;
+		delete path;
 		//lete path;
 	
 	}
@@ -185,6 +187,7 @@ const std::vector<Grid*>& Astar::findPath( short AIPosX,short AIPosY, short Play
 
 		if (current == end)
 		{
+
 			int loopCount = 0;
 			rebuildPath(paths, start, end, loopCount);
 			
@@ -241,6 +244,121 @@ const std::vector<Grid*>& Astar::findPath( short AIPosX,short AIPosY, short Play
 	return paths;
 }
 
+const std::vector<Grid*>& Astar::findPath(Map &map, short AIPosX, short AIPosY, short PlayerPosX, short PlayerPosY)
+{
+	map.resetStatus();
+	std::cout << "starting Astar";
+	for(int i =0 ; i < paths.size(); i++)
+	{
+		paths[i] = NULL;
+		delete paths[i];
+	}
+	paths.clear();
+
+	map.setGridVal(AIPosX, AIPosY, 17);
+	map.setGridVal(PlayerPosX, PlayerPosY, 16);
+
+
+
+	std::priority_queue<Grid*, std::vector<Grid*>, compare > open_list =  std::priority_queue<Grid*, std::vector<Grid*>, compare >();
+
+	Grid *start = map.getGrid(AIPosX, AIPosY);
+	Grid *end = map.getGrid(PlayerPosX, PlayerPosY);
+	start->setStatus(GRID_STATUS_OPEN);
+
+	start->setG(0.0f);
+	double t = heuristicFunction(*start, *end);
+	start->setH(t);
+
+	Grid* current = start;
+	open_list.push(current);
+
+	while (current != end)
+	{
+		if (open_list.size() == 0)
+		{
+			return paths;
+		}
+		current = open_list.top();
+		open_list.pop();
+		current->setStatus(GRID_STATUS_CLOSE);
+
+		if (current == end)
+		{
+			/*
+			int loopCount = 0;
+			rebuildPath(paths, start, end, loopCount);
+
+			if (_refToLastGrid != nullptr)
+			{
+				loopCount = 0;
+				rebuildPath(paths, start, _refToLastGrid, loopCount);
+				if (_refToLastGrid != nullptr) {
+					loopCount = 0;
+					rebuildPath(paths, start, _refToLastGrid, loopCount);
+				}
+			}
+			*/
+
+			current = NULL;
+			delete current;
+			start = NULL;
+			delete start;
+			end = NULL;
+			delete end;
+			for (int i = 0; i < open_list.size(); i++)
+			{
+				Grid* test = open_list.top();
+			}
+			std::priority_queue<Grid*, std::vector<Grid*>, compare > temp;
+			
+		
+
+
+			return paths;
+		}
+		/**/
+		for (int d = 0; d < 4; d++)
+		{
+			Grid* neighbor = map.getNeighbor(current, d);
+			if (neighbor != nullptr)
+				if (neighbor->getStatus() != GRID_STATUS_CLOSE)
+				{
+					if (neighbor->getStatus() != GRID_STATUS_OPEN)
+					{
+						neighbor->setStatus(GRID_STATUS_OPEN);
+						neighbor->setG(current->getG() + 1.0f);
+						double tmp = heuristicFunction(*neighbor, *end);
+						neighbor->setH(tmp);
+						neighbor->setParent(current);
+
+
+
+						open_list.push(neighbor); 
+						
+
+					}
+					else {
+						double tmp = current->getG() + 1.0f;		
+					}
+				}
+
+			neighbor = NULL;
+			delete neighbor;
+
+		}
+		
+	}
+
+	current = NULL;
+	delete current;
+	start = NULL;
+	delete start;
+	end = NULL;
+	delete end;
+	
+	return paths;
+}
 
 Astar::~Astar()
 {

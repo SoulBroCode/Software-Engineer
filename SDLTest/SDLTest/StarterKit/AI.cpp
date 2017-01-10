@@ -5,7 +5,7 @@ AI::AI()
 
 AI::AI(Map* map, short posX, short posY) :
 	moveTimer(0),
-	_finishPath(2)
+	_finishPath(0)
 {
 	_mainMap = map;
 	_currentGrid = new Grid(posX, posY);
@@ -17,8 +17,7 @@ AI::~AI()
 
 
 void AI::addTask() {
-	ThreadPool *theadpool = ThreadPool::getInstance();
-	theadpool->addJob(ThreadPool::action);
+
 }
 void AI::ready()
 {

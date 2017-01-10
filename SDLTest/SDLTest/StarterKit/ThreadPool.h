@@ -8,13 +8,13 @@
 #include <queue>
 
 #include "SDL.h"
-
+#include "ThreadData.h"
 
 class ThreadPool {
 private:
-	static ThreadPool* instance;
-
-	SDL_mutex* _taskLock;
+	std::vector<SDL_Thread*> mThreadPool;
+	std::vector<ThreadData*> mJob;
+	SDL_mutex* mJobLock;
 
 	//SDL_sem* _lock;
 	
@@ -22,20 +22,15 @@ public:
 	ThreadPool();
 	ThreadPool(char numOfThread);
 	~ThreadPool();
-	static ThreadPool* getInstance();
 
 	//ThreadData *data;
-	std::vector<SDL_Thread*> _threadPool;
-	std::vector<std::function<void(void*)>> _tasks;
+	
 
 
 	
 
-
-	void addJob(std::function<void(void* data)> job);
-
-
-	std::function<void(void*)> getTask();
+	ThreadData* ThreadPool::getTask();
+	void addJob(ThreadData*  job);
 
 
 	static void action(void *data)
@@ -55,8 +50,8 @@ public:
 static int worker(void* data)
 {
 	
-	ThreadPool *threadPool = ThreadPool::getInstance();
-	//std::function<void(void*)> task = threadPool->getTask();
+	//ThreadPool *threadPool = ThreadPool::getInstance();
+	//std::function<ThreadData> task = threadPool->getTask();
 
 	
 	//while (true)

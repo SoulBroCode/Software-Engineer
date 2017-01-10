@@ -9,22 +9,20 @@ using namespace std;
 SDL_sem* Game::lock = NULL;
 int thread_A(void *data)
 {
-	Game *g = static_cast<Game*>(data);
-	
+	ThreadData *g = static_cast<ThreadData*>(data);
+
 	while (true)
 	{	
-		SDL_LockMutex(g->mutexLock);
-		if (g->_player->getMoving())
+		//SDL_LockMutex(g->mutexLock);
+		if (g->player->getMoving())
 		{
-			for (int i = 0; i < g->_maxAI; i++)
-			{
-
-				g->_ai[i]->setPath(g->_algo->findPath(g->_ai[i]->getX(), g->_ai[i]->getY(), g->_player->getX(), g->_player->getY()));
-				g->_ai[i]->ready();
-			}
-			g->_player->setMoving(false);
+			
+			g->ai->setPath(g->astar->findPath(g->ai->getX(), g->ai->getY(), g->player->getX(), g->player->getY()));
+			g->ai->ready();
+			
+			g->player->setMoving(false);
 		}
-		SDL_UnlockMutex(g->mutexLock);
+		//SDL_UnlockMutex(g->mutexLock);
 	}
 	
 
@@ -45,8 +43,9 @@ int thread_A(void *data)
 //SDL_SemPost(Game::lock);
 
 
-Game::Game() : mLevel(Level::One),mLoopRunning(false)
+Game::Game() : mLevel(Level::Three),mLoopRunning(false)
 {
+	
 }
 
 Game::~Game()
@@ -59,7 +58,6 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, in
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
-		ThreadPool* _threadpool = ThreadPool::getInstance();
 		lastTime = LTimer::gameTime();
 		
 		std::srand(std::time(0));
@@ -77,8 +75,11 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, in
 		InitAI(mapSize);
 
 		lock = SDL_CreateSemaphore(2);
-		
-		threadA = SDL_CreateThread(thread_A, "1", this);
+		ThreadData* threadData = new ThreadData();
+		threadData->player = _player;
+		threadData->astar = _algo;
+		threadData->ai = _ai[0];
+		//threadA = SDL_CreateThread(thread_A, "1", threadData);
 
 		if(_window != nullptr)
 		{
@@ -142,7 +143,7 @@ void Game::initLevel(int &mapSize )
 	default:
 		mapSize = 1000;
 		wallCount = 18;
-		wallSize = 600;
+		wallSize = 0; //600
 		_maxAI = 1;
 		cam->setSize(100);
 		tileSize = mScreenSize / 100;
@@ -183,17 +184,23 @@ void Game::InitAI(int width)
 	_baseMap->setGridVal(2, 2, GRID_END);
 	_player = new Player(_baseMap, 2, 2);
 	_algo = new Astar(_baseMap);
+
 	_algo->setHeuristicFunc(0);
-	for (int i = 0; i < _maxAI; i++)
+	for (int i = 0; i < 7; i++) {
+		newMap[i] = *_baseMap;
+	}
+	
+
+	for (int i = 0; i < 1; i++)
 	{
 		short posX = 5 + rand() % (width - 8);
 		short posY = 5 + rand() % (width - 8);
 
 		AI* ai = new AI(_baseMap, posX, posY);
-
+		//ai->setPath(_algo->findPath(newMap[0], ai->getX(), ai->getY(), _player->getX(), _player->getY()));
 		_ai.push_back(ai);
 	}
-
+	
 }
 
 void Game::loadContent()
@@ -205,9 +212,13 @@ void Game::update()
 {
 	unsigned int currentTime = LTimer::gameTime();//millis since game started
 	unsigned int deltaTime = currentTime - lastTime;//time since last update
-	for (int i = 0; i < _maxAI; i++)
+	for (int i = 0; i < _ai.size(); i++)
 	{
 		_ai[i]->update(deltaTime);
+		if (_player->getMoving()) {
+			_ai[i]->setPath(_algo->findPath(newMap[0], _ai[i]->getX(), _ai[i]->getY(), _player->getX(), _player->getY()));
+			_player->setMoving(false);
+		}
 	}
 	_player->update(deltaTime);
 	lastTime = currentTime;	//save the curent time for next frame

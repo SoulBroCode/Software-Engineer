@@ -14,6 +14,7 @@ private:
 	int _mapWidth, _mapHeight;
 	float _gridWidth, _gridHeight;
 public:
+	Map() {};
 	Map(const int &mapWidth, const int &mapHeight, const float &gridWidth, const float &gridHeight, const int &defaulVal);
 	Map(const int &width, const int &height, const int &defaulVal);
 	~Map();

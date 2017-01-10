@@ -12,13 +12,7 @@
 #include "LTimer.h"
 #include "AI.h"
 #include "Player.h"
-
-
-
-typedef struct {
-	Astar* param1;
-	AI* param2;
-} ThreadData;
+#include "ThreadData.h"
 
 
 
@@ -46,7 +40,7 @@ public:
 	std::vector<AI*> _ai;
 	int _maxAI;
 	Player * _player;
-
+	Map newMap[7];
 private:
 	void InitLevelOne(int& wallCount, int& wallSize, float& tileSize);
 	void InitLevelTwo();
