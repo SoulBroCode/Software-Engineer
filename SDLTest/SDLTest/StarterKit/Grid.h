@@ -17,7 +17,7 @@ private:
 
 public:
 	Grid();
-	Grid::Grid(const Grid &obj);
+	Grid(const Grid &obj);
 	Grid(short x, short y);
 	~Grid();
 	

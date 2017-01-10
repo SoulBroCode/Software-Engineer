@@ -285,7 +285,7 @@ const std::vector<Grid*>& Astar::findPath(Map &map, short AIPosX, short AIPosY, 
 
 		if (current == end)
 		{
-			/*
+			
 			int loopCount = 0;
 			rebuildPath(paths, start, end, loopCount);
 
@@ -298,7 +298,7 @@ const std::vector<Grid*>& Astar::findPath(Map &map, short AIPosX, short AIPosY, 
 					rebuildPath(paths, start, _refToLastGrid, loopCount);
 				}
 			}
-			*/
+			
 
 			current = NULL;
 			delete current;
@@ -306,11 +306,12 @@ const std::vector<Grid*>& Astar::findPath(Map &map, short AIPosX, short AIPosY, 
 			delete start;
 			end = NULL;
 			delete end;
+			
 			for (int i = 0; i < open_list.size(); i++)
 			{
-				Grid* test = open_list.top();
+
 			}
-			std::priority_queue<Grid*, std::vector<Grid*>, compare > temp;
+			//std::priority_queue<Grid*, std::vector<Grid*>, compare > temp;
 			
 		
 

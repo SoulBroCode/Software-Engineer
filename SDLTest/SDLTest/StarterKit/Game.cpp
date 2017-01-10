@@ -191,7 +191,7 @@ void Game::InitAI(int width)
 	}
 	
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 7; i++)
 	{
 		short posX = 5 + rand() % (width - 8);
 		short posY = 5 + rand() % (width - 8);
@@ -214,11 +214,25 @@ void Game::update()
 	unsigned int deltaTime = currentTime - lastTime;//time since last update
 	for (int i = 0; i < _ai.size(); i++)
 	{
-		_ai[i]->update(deltaTime);
-		if (_player->getMoving()) {
-			_ai[i]->setPath(_algo->findPath(newMap[0], _ai[i]->getX(), _ai[i]->getY(), _player->getX(), _player->getY()));
-			_player->setMoving(false);
-		}
+		
+	}
+	_ai[0]->update(deltaTime);
+	_ai[1]->update(deltaTime);
+	_ai[2]->update(deltaTime);
+	_ai[3]->update(deltaTime);
+	_ai[4]->update(deltaTime);
+	_ai[5]->update(deltaTime);
+	_ai[6]->update(deltaTime);
+	if (_player->getMoving()) { 
+		_ai[0]->setPath(_algo->findPath(newMap[0], _ai[0]->getX(), _ai[0]->getY(), _player->getX(), _player->getY()));
+		_ai[1]->setPath(_algo->findPath(newMap[1], _ai[1]->getX(), _ai[1]->getY(), _player->getX(), _player->getY()));
+		_ai[2]->setPath(_algo->findPath(newMap[2], _ai[2]->getX(), _ai[2]->getY(), _player->getX(), _player->getY()));
+		_ai[3]->setPath(_algo->findPath(newMap[3], _ai[3]->getX(), _ai[3]->getY(), _player->getX(), _player->getY()));
+		_ai[4]->setPath(_algo->findPath(newMap[4], _ai[4]->getX(), _ai[4]->getY(), _player->getX(), _player->getY()));
+		_ai[5]->setPath(_algo->findPath(newMap[5], _ai[5]->getX(), _ai[5]->getY(), _player->getX(), _player->getY()));
+		_ai[6]->setPath(_algo->findPath(newMap[6], _ai[6]->getX(), _ai[6]->getY(), _player->getX(), _player->getY()));
+		_player->setMoving(false);
+
 	}
 	_player->update(deltaTime);
 	lastTime = currentTime;	//save the curent time for next frame
