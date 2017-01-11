@@ -2,23 +2,38 @@
 
 ThreadPool::ThreadPool()
 {
-	
-	for (char i = 0; i < 1; i++)
-	{
-		mThreadPool.push_back(SDL_CreateThread(worker, "test",this));
-	}
+	mJobLock = SDL_CreateMutex();
 }
+
+ThreadPool::ThreadPool(char numOfThread, Map* map, AStar* AStar, Player* player)
+{
+	mMap = map;
+	mAStar = AStar;
+	mPlayer = player;
+	//mPlayer = player;
+	for (char i = 0; i < numOfThread; i++)
+	{
+		mThreadPool.push_back(SDL_CreateThread(worker, "test", this));
+	}
+	mJobLock = SDL_CreateMutex();
+
+}
+
 ThreadPool::~ThreadPool()
 {
 	SDL_DestroyMutex(mJobLock);
 	//SDL_DestroySemaphore(_lock);
 }
 
-ThreadData* ThreadPool::getTask()
+ThreadData* ThreadPool::getJob()
 {
-	ThreadData* task = mJob[0];
-	mJob.erase(mJob.begin());
-	return task;
+	if (!mJob.empty())
+	{
+		ThreadData* task = mJob[0];
+		mJob.erase(mJob.begin());
+		return task;
+	}
+	return nullptr;
 }
 
 void ThreadPool::addJob(ThreadData*  job)

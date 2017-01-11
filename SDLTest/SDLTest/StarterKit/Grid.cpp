@@ -5,7 +5,7 @@ Grid::Grid(const Grid &obj) {
 	_x = obj._x;
 	_y = obj._y;
 
-	Grid* _parentGrid = NULL;
+	Grid* _parentGrid =nullptr;
 	
 	_G = obj._G;
 	_H = obj._H;

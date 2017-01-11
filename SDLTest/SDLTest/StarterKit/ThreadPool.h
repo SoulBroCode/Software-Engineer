@@ -9,27 +9,35 @@
 
 #include "SDL.h"
 #include "ThreadData.h"
+#include "Map.h"
+#include "Player.h"
+#include "AStar.h"
+#include "AI.h"
+
 
 class ThreadPool {
 private:
 	std::vector<SDL_Thread*> mThreadPool;
 	std::vector<ThreadData*> mJob;
 	SDL_mutex* mJobLock;
-
+	
 	//SDL_sem* _lock;
 	
 public:
+	Map* mMap;
+	AStar* mAStar;
+	Player* mPlayer;
+	//Player* mPlayer;
 	ThreadPool();
-	ThreadPool(char numOfThread);
+	ThreadPool(char numOfThread, Map* map, AStar* AStar, Player* player);
 	~ThreadPool();
-
-	//ThreadData *data;
 	
 
 
 	
 
-	ThreadData* ThreadPool::getTask();
+	ThreadData* ThreadPool::getJob();
+
 	void addJob(ThreadData*  job);
 
 
@@ -49,16 +57,33 @@ public:
 
 static int worker(void* data)
 {
-	
-	//ThreadPool *threadPool = ThreadPool::getInstance();
-	//std::function<ThreadData> task = threadPool->getTask();
+	ThreadPool *threadPool = static_cast<ThreadPool*>(data);
+	Map map = *threadPool->mMap;
+	AStar* aStar = threadPool->mAStar;
+	Player* player = threadPool->mPlayer;
+	(*player).print();
 
 	
-	//while (true)
-	//{
-	//	SDL_Delay(400);
-	//task(threadPool->data);*/
-	//}
+	while (true)
+	{
+		std::cout << "threading!!!!!" << std::endl;
+
+		ThreadData* t = threadPool->getJob();
+		if (t != nullptr)
+		{
+			AI* ai = t->ai;
+			(*ai).print();
+			//mPlayer = new Player(mMap, 2, 2);
+			//ai->setPath(aStar->findPath(map, ai->getX(), ai->getY(), player->getX(), player->getY()));
+			int i = 0;
+		}
+		//mAStar->findPath(mapTest, mAI[i]->getX(), mAI[i]->getY(), mPlayer->getX(), mPlayer->getY())
+		//aStar->findPath(map, t->ai->getX(), t->ai->getY(), player->getX(), player->getY())
+		//t->ai->setPath();
+		SDL_Delay(20000);
+
+		
+	}
 
 	return 0;
 }

@@ -4,44 +4,43 @@ AI::AI()
 }
 
 AI::AI(Map* map, short posX, short posY) :
-	moveTimer(0),
-	_finishPath(0)
+	mMoveTimer(0),
+	mReachPlayer(0),
+	mReadyToMove(true)
 {
-	_mainMap = map;
-	_currentGrid = new Grid(posX, posY);
-	TIME_TO_MOVE = 200;
+	mMap = map;
+
+	mCurrentGrid = new Grid(posX, posY);
+	
 }
 AI::~AI()
 {
 }
 
 
-void AI::addTask() {
 
-}
-void AI::ready()
-{
-	if(_finishPath != 1)
-		_finishPath = 0;
-	
-}
 void AI::update(unsigned int deltatime)
 {
-	if (_finishPath == 0)
+	if (mReachPlayer == 0)
 	{
-		moveTimer -= deltatime;
-		if (moveTimer < 0) {
-			moveTimer = TIME_TO_MOVE;
-			if (!_path.empty())
+		mMoveTimer -= deltatime;
+		if (mMoveTimer < 0) {
+			mMoveTimer = TIME_TO_MOVE;
+			if (!mPath.empty())
 			{
-				_mainMap->setGridVal(_currentGrid->getX(), _currentGrid->getY(), GRID_FIELD);
-				_currentGrid = _path.back();
-				_path.pop_back();
-				_mainMap->setGridVal(_currentGrid->getX(), _currentGrid->getY(), GRID_START);
-			}
-			else {
-				_mainMap->setGridVal(_currentGrid->getX(), _currentGrid->getY(), GRID_FIELD);
-				_finishPath = 1;
+				if (mPath.size() != 1)
+				{
+					mMap->setGridVal(mCurrentGrid->getX(), mCurrentGrid->getY(), GRID_FIELD);
+					mCurrentGrid = mPath.back();
+					mPath.pop_back();
+					mMap->setGridVal(mCurrentGrid->getX(), mCurrentGrid->getY(), GRID_START);
+				}
+				else 
+				{
+					mMap->setGridVal(mCurrentGrid->getX(), mCurrentGrid->getY(), GRID_FIELD);
+					mPath.pop_back();
+					mReachPlayer = 1;
+				}
 			}
 		}
 	}
@@ -49,21 +48,32 @@ void AI::update(unsigned int deltatime)
 
 
 
-void AI::setPath(const std::vector<Grid*> &path)
+void AI::setPath(const std::vector<Grid*> path)
 {
-	_path = path;
+	mPath = path;
+	if (mReadyToMove)
+	{
+		mReachPlayer = 0;
+		mReadyToMove = false;
+	}
+
 }
 
 void AI::setCurrentGrid(short int posX, short int posY)
 {
-	_currentGrid = new Grid(posX, posY);
+	mCurrentGrid = new Grid(posX, posY);
 }
 
 short AI::getX()
 {
-	return _currentGrid->getX();
+	return mCurrentGrid->getX();
 }
 short AI::getY()
 {
-	return  _currentGrid->getY();
+	return  mCurrentGrid->getY();
+}
+
+char AI::getReachPlayer()
+{
+	return mReachPlayer;
 }

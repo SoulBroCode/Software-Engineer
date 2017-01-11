@@ -91,7 +91,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="A-star.cpp" />
+    <ClCompile Include="AStar.cpp" />
     <ClCompile Include="AI.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -103,7 +103,7 @@
     <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="A-star.h" />
+    <ClInclude Include="AStar.h" />
     <ClInclude Include="AI.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Circle.h" />

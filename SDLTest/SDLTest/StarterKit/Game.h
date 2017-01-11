@@ -4,14 +4,16 @@
 #include <ctime>
 #include <SDL_image.h>
 
+#include "ThreadPool.h"
 #include "Camera.h"
 #include "Debug.h"
 #include "Grid.h"
 #include "Map.h"
-#include "A-star.h"
+#include "AStar.h"
 #include "LTimer.h"
-#include "AI.h"
 #include "Player.h"
+#include "AI.h"
+
 #include "ThreadData.h"
 
 
@@ -34,12 +36,11 @@ public:
 	void initLevel(int &mapWidth);
 	void InitAI(int gameWidth);
 	
-	static SDL_sem *lock;
-	SDL_mutex *mutexLock;
-	Astar* _algo;
-	std::vector<AI*> _ai;
-	int _maxAI;
-	Player * _player;
+	
+	
+
+	Map mapTest;
+	Map* mMap;
 	Map newMap[7];
 private:
 	void InitLevelOne(int& wallCount, int& wallSize, float& tileSize);
@@ -54,15 +55,20 @@ private:
 	};
 	Level mLevel;
 
-	SDL_Window* _window;
-	SDL_Renderer* _renderer;
+	SDL_Window* mWindow;
+	SDL_Renderer* mRenderer;
 
-	SDL_Surface* _surface;
+	SDL_Surface* mSurface;
 
-	Map* _baseMap;
+	
+	AStar* mAStar;
 
-	Grid* _end;
-	Grid* _start;
+	Player* mPlayer;
+	std::vector<AI*> mAI;
+
+	ThreadPool* mThreadPool;
+
+	int mMaxAI;
 
 	int mScreenSize;
 

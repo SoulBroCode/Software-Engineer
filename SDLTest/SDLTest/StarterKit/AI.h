@@ -4,32 +4,40 @@
 #include <math.h>
 #include <vector>
 #include "Map.h"
-#include "ThreadPool.h"
+
 
 class AI {
 private:
-	Map* _mainMap;
-	Grid* _currentGrid;
-	std::vector<Grid*> _path;
+	Map* mMap;
+	Grid* mCurrentGrid;
+	std::vector<Grid*> mPath;
 	
-	int moveTimer;
+	int mMoveTimer;
 	
-	char _finishPath;
+	char mReachPlayer;
+	const int TIME_TO_MOVE = 200;
+
+	bool mReadyToMove;
 public:
-	int TIME_TO_MOVE;
+	
 	AI();
-	AI(Map* map, short posX, short posY);
+	AI(Map* map , short posX, short posY);
 	~AI();
 	
-	void ready();
-	void addTask();
+	void print()
+	{
+		std::cout << "AI PRINTING" << std::endl;
+	}
 	void update(unsigned int deltatime);
 
-	void setPath(const std::vector<Grid*> &path);
+
+	void setPath(const std::vector<Grid*> path);
 	void setCurrentGrid(short int posX, short int posY);
 
 	short getX();
 	short getY();
+
+	char getReachPlayer();
 };
 
 #endif 

@@ -24,9 +24,6 @@
     <ClInclude Include="Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="A-star.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Grid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,15 +51,15 @@
     <ClInclude Include="ThreadData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AStar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="A-star.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Grid.cpp">
@@ -84,6 +81,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AStar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

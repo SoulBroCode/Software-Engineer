@@ -11,8 +11,10 @@ Map::Map(const Map &obj) {
 		for (int j = 0; j < _mapHeight; j++)
 		{
 			_grid[i][j] = obj._grid[i][j];
+		
 		}
 	}
+
 }
 
 
@@ -261,10 +263,7 @@ void Map::draw(SDL_Renderer *rend)
 				SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
 			}
 			
-			if (SDL_RenderFillRect(rend, &rect) == -1)
-			{
-				int i = 0;
-			};
+			SDL_RenderFillRect(rend, &rect);
 			SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 		
 

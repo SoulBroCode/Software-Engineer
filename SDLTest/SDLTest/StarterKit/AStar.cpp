@@ -1,17 +1,16 @@
-#include "A-star.h"
+#include "AStar.h"
 
-Astar::Astar(Map *map)
+AStar::AStar()
 {
 	_heuristicFunc = 1;		// Manhattan
-	_refMap = map;
 }
 
-void Astar::setHeuristicFunc(int num)
+void AStar::setHeuristicFunc(int num)
 {
 	_heuristicFunc = num;
 }
 
-double Astar::heuristicFunction(Grid current, Grid target)
+double AStar::heuristicFunction(Grid current, Grid target)
 {
 	double tmp = 0.0f;
 	// Manhattan Distance
@@ -24,13 +23,13 @@ double Astar::heuristicFunction(Grid current, Grid target)
 	return tmp;
 }
 
-void Astar::rebuildPath(std::vector<Grid*> &paths, Grid *start, Grid *end, int &loopCount)
+void AStar::rebuildPath(std::vector<Grid*> &paths, Grid *start, Grid *end, int &loopCount, Grid* _refToLastGrid)
 {
 
 	if (end->getGridVal() != GRID_END && end->getGridVal() != GRID_START) 
 	{
 		loopCount++;
-		end->setGridVal(GRID_PATH);
+		//end->setGridVal(GRID_PATH);
 		Grid* path = new Grid();
 		path->init(end->getX(), end->getY());
 		paths.push_back(path);
@@ -41,7 +40,7 @@ void Astar::rebuildPath(std::vector<Grid*> &paths, Grid *start, Grid *end, int &
 	}
 	
 	if (start != end && loopCount < 3000)
-		rebuildPath(paths, start, end->getParent(), loopCount);
+		rebuildPath(paths, start, end->getParent(), loopCount, _refToLastGrid);
 	else if (start == end)
 		_refToLastGrid = nullptr;
 	else
@@ -55,106 +54,12 @@ struct compare
 	{  
 		return (l->getF() > r->getF());  
 	}  
-};  
+}; 
 /*
-bool Astar::findPath(Grid *start, Grid *end)
-{
-	
-	
-	Map copyMap = *_refMap;
-	//memcpy(&copyMap, &_refMap, sizeof(_refMap));
-	 
-
-	std::priority_queue<Grid*, std::vector<Grid*>, compare > *open_list = new std::priority_queue<Grid*, std::vector<Grid*>, compare >();
-
-	// std::vector<Grid*> *close_list = new std::vector<Grid*>();
-	start = copyMap.getStartGrid();
-	end = copyMap.getEndGrid();
-	start->setStatus(GRID_STATUS_OPEN);
-
-	start->setG(0.0f);
-	double t = heuristicFunction(*start, *end);
-	start->setH(t);
-
-	Grid* current = start;
-	open_list->push(current);
-
-	while (current != end)
-	{
-		if (open_list->size() == 0)
-		{
-			return false;
-		}
-		current = open_list->top();
-		open_list->pop();
-		current->setStatus(GRID_STATUS_CLOSE);
-
-		if (current == end)
-		{
-			//Grid *refToFromGrid = nullptr;
-			Grid	 *_refToLastGrid;
-			int loopCount = 0;
-			rebuildPath(start, end, loopCount);
-			if (_refToLastGrid != nullptr) 
-			{
-				loopCount = 0;
-				rebuildPath(start, _refToLastGrid, loopCount);
-				if (_refToLastGrid != nullptr) {
-					loopCount = 0;
-					rebuildPath(start, _refToLastGrid, loopCount);
-				}
-			}
-				
-				
-
-			
-			
-			//"DONE! PATH FOUND! Path Length = ";
-
-			return true;
-		}
-
-		for (int d = 0; d < 4; d++)
-		{
-			Grid* neighbor = copyMap.getNeighbor(current, d);
-			if (neighbor != nullptr)
-				if (neighbor->getStatus() != GRID_STATUS_CLOSE)
-				{
-					if (neighbor->getStatus() != GRID_STATUS_OPEN)
-					{
-						neighbor->setStatus(GRID_STATUS_OPEN);
-						neighbor->setG(current->getG() + 1.0f);
- 						double tmp = heuristicFunction(*neighbor, *end);
-						neighbor->setH(tmp);
-						neighbor->setParent(current);
-
-						
-
-						open_list->push(neighbor);
-					}
-					else {
-						double tmp = current->getG() + 1.0f;
-						if (tmp < neighbor->getG())
-						{
-							neighbor->setG(tmp);
-							neighbor->setParent(current);
-						
-
-							std::make_heap(const_cast<Grid**>(&open_list->top()),
-								const_cast<Grid**>(&open_list->top()) + open_list->size(),
-								compare());
-						}
-					}
-				}
-		}
-	}
-	return true;
-}*/
-
 const std::vector<Grid*>& Astar::findPath( short AIPosX,short AIPosY, short PlayerPosX, short PlayerPosY)
 {
 	std::cout << "starting Astar";
-	paths.clear();
+
 	Map copyMap = *_refMap;
 
 	copyMap.setGridVal(AIPosX, AIPosY, 17);
@@ -243,19 +148,18 @@ const std::vector<Grid*>& Astar::findPath( short AIPosX,short AIPosY, short Play
 	}
 	return paths;
 }
-
-const std::vector<Grid*>& Astar::findPath(Map &map, short AIPosX, short AIPosY, short PlayerPosX, short PlayerPosY)
+*/
+const std::vector<Grid*> AStar::findPath(Map &map, short AIPosX, short AIPosY, short PlayerPosX, short PlayerPosY)
 {
+	std::cout << "STARTING ASTAR" << std::endl;
+	std::vector<Grid*> paths;
 	map.resetStatus();
-	std::cout << "starting Astar";
-	for(int i =0 ; i < paths.size(); i++)
-	{
-		paths[i] = NULL;
-		delete paths[i];
-	}
-	paths.clear();
+	
+
+	
 
 	map.setGridVal(AIPosX, AIPosY, 17);
+
 	map.setGridVal(PlayerPosX, PlayerPosY, 16);
 
 
@@ -285,17 +189,17 @@ const std::vector<Grid*>& Astar::findPath(Map &map, short AIPosX, short AIPosY, 
 
 		if (current == end)
 		{
-			
+			Grid* _refToLastGrid = NULL;
 			int loopCount = 0;
-			rebuildPath(paths, start, end, loopCount);
+			rebuildPath(paths, start, end, loopCount, _refToLastGrid);
 
 			if (_refToLastGrid != nullptr)
 			{
 				loopCount = 0;
-				rebuildPath(paths, start, _refToLastGrid, loopCount);
+				rebuildPath(paths, start, _refToLastGrid, loopCount, _refToLastGrid);
 				if (_refToLastGrid != nullptr) {
 					loopCount = 0;
-					rebuildPath(paths, start, _refToLastGrid, loopCount);
+					rebuildPath(paths, start, _refToLastGrid, loopCount, _refToLastGrid);
 				}
 			}
 			
@@ -307,11 +211,6 @@ const std::vector<Grid*>& Astar::findPath(Map &map, short AIPosX, short AIPosY, 
 			end = NULL;
 			delete end;
 			
-			for (int i = 0; i < open_list.size(); i++)
-			{
-
-			}
-			//std::priority_queue<Grid*, std::vector<Grid*>, compare > temp;
 			
 		
 
@@ -341,6 +240,12 @@ const std::vector<Grid*>& Astar::findPath(Map &map, short AIPosX, short AIPosY, 
 					}
 					else {
 						double tmp = current->getG() + 1.0f;		
+						if (tmp < neighbor->getG())
+						{
+							neighbor->setG(tmp);
+							neighbor->setParent(current);
+
+						}
 					}
 				}
 
@@ -361,6 +266,6 @@ const std::vector<Grid*>& Astar::findPath(Map &map, short AIPosX, short AIPosY, 
 	return paths;
 }
 
-Astar::~Astar()
+AStar::~AStar()
 {
 }
