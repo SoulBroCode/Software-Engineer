@@ -1,16 +1,16 @@
 #include "Map.h"
 Map::Map(const Map &obj) {
 
-	_mapWidth = obj._mapWidth;
-	_mapHeight = obj._mapHeight;
-	_grid = new Grid*[_mapWidth];
-	for (int i = 0; i < _mapWidth; i++)
+	_mMapWidth = obj._mMapWidth;
+	mMapHeight = obj.mMapHeight;
+	mGrid = new Grid*[_mMapWidth];
+	for (int i = 0; i < _mMapWidth; i++)
 	{
-		_grid[i] = new Grid[_mapHeight];
+		mGrid[i] = new Grid[mMapHeight];
 
-		for (int j = 0; j < _mapHeight; j++)
+		for (int j = 0; j < mMapHeight; j++)
 		{
-			_grid[i][j] = obj._grid[i][j];
+			mGrid[i][j] = obj.mGrid[i][j];
 		
 		}
 	}
@@ -19,20 +19,20 @@ Map::Map(const Map &obj) {
 
 
 Map::Map(const int &mapWidth, const int &mapHeight, const float &gridWidth, const float &gridHeight, const int &defaultVal) : 
-	_mapWidth(mapWidth), 
-	_mapHeight(mapHeight),
-	_gridWidth(gridWidth),
-	_gridHeight(gridHeight)
+	_mMapWidth(mapWidth), 
+	mMapHeight(mapHeight),
+	mGridWidth(gridWidth),
+	mGridHeight(gridHeight)
 {
 
-	_grid = new Grid*[_mapWidth];
-	for (int i = 0; i < _mapWidth; i++)
+	mGrid = new Grid*[_mMapWidth];
+	for (int i = 0; i < _mMapWidth; i++)
 	{
-		_grid[i] = new Grid[_mapHeight];
-		for (int j = 0; j < _mapHeight; j++)
+		mGrid[i] = new Grid[mMapHeight];
+		for (int j = 0; j < mMapHeight; j++)
 		{
-			_grid[i][j].setGridCoord(i, j);
-			_grid[i][j].setGridVal(defaultVal);
+			mGrid[i][j].setGridCoord(i, j);
+			mGrid[i][j].setGridVal(defaultVal);
 		}
 	}
 	// (width, height)
@@ -40,16 +40,16 @@ Map::Map(const int &mapWidth, const int &mapHeight, const float &gridWidth, cons
 
 Map::Map(const int &width, const int &height, const int &defaultVal)
 {
-	_mapWidth = width;
-	_mapHeight = height;
-	_grid = new Grid*[_mapWidth];
-	for (int i = 0; i < _mapWidth; i++)
+	_mMapWidth = width;
+	mMapHeight = height;
+	mGrid = new Grid*[_mMapWidth];
+	for (int i = 0; i < _mMapWidth; i++)
 	{
-		_grid[i] = new Grid[_mapHeight];
-		for (int j = 0; j < _mapHeight; j++)
+		mGrid[i] = new Grid[mMapHeight];
+		for (int j = 0; j < mMapHeight; j++)
 		{
-			_grid[i][j].setGridCoord(i , j);
-			_grid[i][j].setGridVal(defaultVal);
+			mGrid[i][j].setGridCoord(i , j);
+			mGrid[i][j].setGridVal(defaultVal);
 		}
 	}
 	// (width, height)
@@ -57,21 +57,21 @@ Map::Map(const int &width, const int &height, const int &defaultVal)
 
 Map::~Map()
 {
-	for (int i = 0; i < _mapWidth; i++)
-		delete[] _grid[i];
-	delete[] _grid;
+	for (int i = 0; i < _mMapWidth; i++)
+		delete[] mGrid[i];
+	delete[] mGrid;
 }
 void Map::generateWall(int wallCount , int spawnRegionOffset, int wallLenght)
 {
 
 
 
-	for (int i = 0; i < _mapWidth; i++)
-		for (int j = 0; j < _mapHeight; j++)
+	for (int i = 0; i < _mMapWidth; i++)
+		for (int j = 0; j < mMapHeight; j++)
 		{
 			//generate border walls
-			if (i == 0 || j == 0 || i == _mapHeight - 1 || j == _mapWidth - 1) {
-				_grid[i][j].setGridVal(GRID_WALL);
+			if (i == 0 || j == 0 || i == mMapHeight - 1 || j == _mMapWidth - 1) {
+				mGrid[i][j].setGridVal(GRID_WALL);
 			}
 		
 			
@@ -82,7 +82,7 @@ void Map::generateWall(int wallCount , int spawnRegionOffset, int wallLenght)
 	int k = 0;
 	while (k < wallCount)
 	{
-		int x = (rand() % (_mapWidth - spawnRegionOffset * 2)) + spawnRegionOffset;
+		int x = (rand() % (_mMapWidth - spawnRegionOffset * 2)) + spawnRegionOffset;
 		bool nextToOtherWall = false;
 		for (int i = 0; i < wallPosition.size(); i++)
 		{
@@ -97,15 +97,15 @@ void Map::generateWall(int wallCount , int spawnRegionOffset, int wallLenght)
 			{
 				for (int y = 1; y < wallLenght; y++)
 				{
-					_grid[x][y].setGridVal(GRID_WALL);
+					mGrid[x][y].setGridVal(GRID_WALL);
 				}
 			}
 			else
 			{
-				for (int y = _mapHeight - wallLenght; y < _mapHeight; y++)
+				for (int y = mMapHeight - wallLenght; y < mMapHeight; y++)
 				{
 
-					_grid[x][y].setGridVal(GRID_WALL);
+					mGrid[x][y].setGridVal(GRID_WALL);
 				}
 			}
 			k++;
@@ -120,87 +120,87 @@ void Map::generateWall(int wallCount , int spawnRegionOffset, int wallLenght)
 
 void Map::resetMap()
 {
-	for (int i = 0; i < _mapWidth; i++)
-		for (int j = 0; j < _mapHeight; j++)
-			if (_grid[i][j].getGridVal() != 0)
+	for (int i = 0; i < _mMapWidth; i++)
+		for (int j = 0; j < mMapHeight; j++)
+			if (mGrid[i][j].getGridVal() != 0)
 			{
-				_grid[i][j].setStatus(0);
-				if (_grid[i][j].getGridVal() == GRID_PATH)
-					_grid[i][j].setGridVal(GRID_FIELD);
+				mGrid[i][j].setStatus(0);
+				if (mGrid[i][j].getGridVal() == GRID_PATH)
+					mGrid[i][j].setGridVal(GRID_FIELD);
 
 			}
 }
 
 void Map::resetStatus()
 {
-	for (int i = 0; i < _mapWidth; i++)
-		for (int j = 0; j < _mapHeight; j++)
+	for (int i = 0; i < _mMapWidth; i++)
+		for (int j = 0; j < mMapHeight; j++)
 		{
-			_grid[i][j].setStatus(0);
-			_grid[i][j].setParent(NULL);
-			_grid[i][j].setH(0);
-			_grid[i][j].setG(0);
+			mGrid[i][j].setStatus(0);
+			mGrid[i][j].setParent(NULL);
+			mGrid[i][j].setH(0);
+			mGrid[i][j].setG(0);
 		}
 			
 }
 
 void Map::reinit()
 {
-	for (int i = 0; i < _mapWidth; i++)
-		for (int j = 0; j < _mapHeight; j++)
+	for (int i = 0; i < _mMapWidth; i++)
+		for (int j = 0; j < mMapHeight; j++)
 		{
-			_grid[i][j].setStatus(0);
-			_grid[i][j].setGridVal(1);
+			mGrid[i][j].setStatus(0);
+			mGrid[i][j].setGridVal(1);
 		}
 }
 
 void Map::setGridVal(const int &w, const int &h, const int &val)
 {
-	_grid[w][h].setGridVal(val);
+	mGrid[w][h].setGridVal(val);
 }
 
 void Map::setGridWidth(float tilesize)
 {
-	_gridHeight = tilesize;
-	_gridWidth = tilesize;
+	mGridHeight = tilesize;
+	mGridWidth = tilesize;
 }
 
 Grid* Map::getStartGrid()
 {
-	for (int i = 0; i < _mapWidth; i++)
-		for (int j = 0; j < _mapHeight; j++)
-			if (_grid[i][j].getGridVal() == GRID_START)
-				return &_grid[i][j];
+	for (int i = 0; i < _mMapWidth; i++)
+		for (int j = 0; j < mMapHeight; j++)
+			if (mGrid[i][j].getGridVal() == GRID_START)
+				return &mGrid[i][j];
 	return nullptr;
 }
 
 Grid* Map::getEndGrid()
 {
-	for (int i = 0; i < _mapWidth; i++)
-		for (int j = 0; j < _mapHeight; j++)
-			if (_grid[i][j].getGridVal() == GRID_END)
-				return &_grid[i][j];
+	for (int i = 0; i < _mMapWidth; i++)
+		for (int j = 0; j < mMapHeight; j++)
+			if (mGrid[i][j].getGridVal() == GRID_END)
+				return &mGrid[i][j];
 	return nullptr;
 }
 
 const int Map::getGridVal(const int &w, const int &h)
 {
-	return _grid[w][h].getGridVal();
+	return mGrid[w][h].getGridVal();
 }
 
 const int Map::getWidth()
 {
-	return _mapWidth;
+	return _mMapWidth;
 }
 
 const int Map::getHeight()
 {
-	return _mapHeight;
+	return mMapHeight;
 }
 
 Grid* Map::getGrid(const int &w, const int &h)
 {
-	return &_grid[w][h];
+	return &mGrid[w][h];
 }
 
 Grid* Map::getNeighbor(Grid* current, const int &direction)
@@ -214,12 +214,12 @@ Grid* Map::getNeighbor(Grid* current, const int &direction)
 	int n_w, n_h;
 	n_w = current->getX() + _direction[direction*2];
 	n_h = current->getY() + _direction[direction*2 + 1];
-	char gridVal = _grid[n_w][n_h].getGridVal();
-	if ( n_w < 0 || n_h < 0 || n_w >= _mapWidth || n_h >= _mapHeight 
+	char gridVal = mGrid[n_w][n_h].getGridVal();
+	if ( n_w < 0 || n_h < 0 || n_w >= _mMapWidth || n_h >= mMapHeight 
 		|| gridVal == GRID_WALL)
 		return nullptr;
 	else
-		return &_grid[n_w][n_h];
+		return &mGrid[n_w][n_h];
 }
 
 void Map::draw(SDL_Renderer *rend)
@@ -229,7 +229,7 @@ void Map::draw(SDL_Renderer *rend)
 	unsigned short camPosY = cam->getPosY();
 	int maxOffsetX = camPosX + cam->getSize();
 	int maxOffsetY = camPosY +cam->getSize();
-	if (_grid[29][29].getGridVal() == GRID_WALL)
+	if (mGrid[29][29].getGridVal() == GRID_WALL)
 	{
 		int i = 0;
 	}
@@ -240,10 +240,10 @@ void Map::draw(SDL_Renderer *rend)
 			/**/
 			SDL_Rect rect = SDL_Rect();
 			//translation of 
-			rect.x = _gridWidth * i - _gridWidth * camPosX;
-			rect.y = _gridHeight * j - _gridWidth * camPosY;
-			rect.h = _gridWidth;
-			rect.w = _gridHeight;
+			rect.x = mGridWidth * i - mGridWidth * camPosX;
+			rect.y = mGridHeight * j - mGridWidth * camPosY;
+			rect.h = mGridWidth;
+			rect.w = mGridHeight;
 			if (i == 85)
 			{
 				int idk = 1;
@@ -254,19 +254,19 @@ void Map::draw(SDL_Renderer *rend)
 			else if (_grid[i][j].getStatus() == GRID_STATUS_OPEN)
 			else
 			*/
-			if (_grid[i][j].getGridVal() == GRID_WALL)
+			if (mGrid[i][j].getGridVal() == GRID_WALL)
 			{
 				SDL_SetRenderDrawColor(rend, 125, 125, 125, 255);
 			}
-			else if (_grid[i][j].getGridVal() == GRID_END)
+			else if (mGrid[i][j].getGridVal() == GRID_END)
 			{
 				SDL_SetRenderDrawColor(rend, 0, 255, 0, 255);
 			}
-			else if (_grid[i][j].getGridVal() == GRID_START)
+			else if (mGrid[i][j].getGridVal() == GRID_START)
 			{
 				SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
 			}
-			else  if (_grid[i][j].getGridVal() == GRID_PATH)
+			else  if (mGrid[i][j].getGridVal() == GRID_PATH)
 			{
 				SDL_SetRenderDrawColor(rend, 200, 200, 0, 255);
 			}
@@ -289,10 +289,10 @@ void Map::draw(SDL_Renderer *rend)
 // ================================
 void Map::debug_printGrid()
 {
-	for (int j = 0; j < _mapHeight; j++)
+	for (int j = 0; j < mMapHeight; j++)
 	{
-		for (int i = 0; i < _mapWidth; i++)
-			std::cout << _grid[i][j].getGridVal() << " ";
+		for (int i = 0; i < _mMapWidth; i++)
+			std::cout << mGrid[i][j].getGridVal() << " ";
 		std::cout << std::endl;
 	}
 }

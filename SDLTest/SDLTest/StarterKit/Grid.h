@@ -5,8 +5,8 @@
 
 class Grid {
 private:
-	char _status;
-	char _value;
+	char _status;//close or open
+	char _value; // grid type
 	short _x;
 	short _y;
 

@@ -8,11 +8,11 @@
 
 class Player {
 private:
-	Map* _mainMap;
-	Grid* _currentGrid;
-	std::vector<Grid*> _path;
-	bool moving;
-	int moveTimer;
+	Map* mMap;
+	Grid* mCurrentGrid;
+	std::vector<Grid*> mPath;
+	bool mMoving;
+	int mMoveTimer;
 	int TIME_TO_MOVE;
 public:
 	

@@ -26,11 +26,11 @@ public:
 
 private:
 	static Camera* instance;
-	unsigned short _posX;
-	unsigned short _posY;
-	unsigned short _maxPosX;
-	unsigned short _maxPosY;
-	unsigned short _size;
+	unsigned short mPosX;
+	unsigned short mPosY;
+	unsigned short mMaxPosX;
+	unsigned short mMaxPosY;
+	unsigned short mSize;
 	
 };
 

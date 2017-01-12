@@ -11,11 +11,11 @@ Camera* Camera::getInstance()
 }
 
 Camera::Camera() :
-	_posX(0),
-	_posY(0),
-	_maxPosX(0),
-	_maxPosY(0),
-	_size(0)
+	mPosX(0),
+	mPosY(0),
+	mMaxPosX(0),
+	mMaxPosY(0),
+	mSize(0)
 {
 }
 
@@ -26,49 +26,49 @@ Camera::~Camera()
 
 void Camera::zoom(const short zoom)
 {
-	_size += zoom;
+	mSize += zoom;
 }
 
 
 void Camera::setPosX(const unsigned short &posX)
 {
-	_posX = posX;
+	mPosX = posX;
 }
 void Camera::setPosY(const unsigned short &posY)
 {
-	_posY = posY;
+	mPosY = posY;
 }
 void Camera::setMaxPosX(const unsigned short &maxPosX)
 {
-	_maxPosX = maxPosX;
+	mMaxPosX = maxPosX;
 }
 void Camera::setMaxPosY(const unsigned short &maxPosY)
 {
-	_maxPosY = maxPosY;
+	mMaxPosY = maxPosY;
 }
 void Camera::setSize(const unsigned short &size)
 {
-	_size = size;
+	mSize = size;
 }
 
 
 const unsigned short Camera::getPosX()
 {
-	return _posX;
+	return mPosX;
 }
 const unsigned short Camera::getPosY()
 {
-	return _posY;
+	return mPosY;
 }
 const unsigned short Camera::getMaxPosX()
 {
-	return _maxPosX;
+	return mMaxPosX;
 }
 const unsigned short Camera::getMaxPosY()
 {
-	return _maxPosY;
+	return mMaxPosY;
 }
 const unsigned short Camera::getSize()
 {
-	return _size;
+	return mSize;
 }

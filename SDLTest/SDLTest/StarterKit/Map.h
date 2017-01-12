@@ -10,9 +10,9 @@
 
 class Map {
 private:
-	Grid **_grid;
-	int _mapWidth, _mapHeight;
-	float _gridWidth, _gridHeight;
+	Grid **mGrid;
+	int _mMapWidth, mMapHeight;
+	float mGridWidth, mGridHeight;
 public:
 	Map() {};
 	Map(const int &mapWidth, const int &mapHeight, const float &gridWidth, const float &gridHeight, const int &defaulVal);

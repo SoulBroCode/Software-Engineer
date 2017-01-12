@@ -19,16 +19,14 @@ class ThreadPool {
 private:
 	std::vector<SDL_Thread*> mThreadPool;
 	std::deque<ThreadData*> mJob;
-	char mMaxThread;
-	bool reset;
-	//SDL_sem* _lock;
+	int mMaxThread;
 	
 public:
 	int mThreadFinish;
 	bool mStop;
 	SDL_mutex* mJobLock; //use spinning mutex to get job
 	SDL_mutex* mEndLock; //use spinning mutex to destory thread via counter
-	SDL_sem* mWaitLock; //semphore for adding jobs, only when there is a job that thread will run 
+	SDL_semaphore* mWaitLock; //semphore for adding jobs, only when there is a job that thread will run 
 	Map* mMap;
 	AStar* mAStar;
 	Player* mPlayer;
@@ -53,6 +51,7 @@ public:
 
 static int worker(void* data)
 {
+	SDL_Delay(500);
 	ThreadPool *threadPool = static_cast<ThreadPool*>(data);
 	Map map = *threadPool->mMap;
 	AStar* aStar = threadPool->mAStar;
@@ -61,8 +60,8 @@ static int worker(void* data)
 	
 	while (!threadPool->mStop)
 	{
-		SDL_Delay(200);
-		//SDL_SemWait(threadPool->mWaitLock);
+		
+		SDL_SemWait(threadPool->mWaitLock);
 		//spinning thread
 		while (SDL_LockMutex(threadPool->mJobLock) != 0)
 		{

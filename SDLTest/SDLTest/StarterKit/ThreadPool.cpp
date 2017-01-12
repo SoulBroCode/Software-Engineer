@@ -7,6 +7,7 @@ ThreadPool::ThreadPool()
 
 ThreadPool::ThreadPool(int numOfThread, Map* map, AStar* AStar, Player* player)
 {
+	std::cout << "Adding Threads" << std::endl;
 	mMap = map;
 	mAStar = AStar;
 	mPlayer = player;
@@ -18,14 +19,15 @@ ThreadPool::ThreadPool(int numOfThread, Map* map, AStar* AStar, Player* player)
 	}
 	mJobLock = SDL_CreateMutex();
 	mEndLock = SDL_CreateMutex();
-	mWaitLock = SDL_CreateSemaphore(7);
+	mWaitLock = SDL_CreateSemaphore(0);
 	mThreadFinish = 0;
 	mStop = false;
-	reset = false;
 }
 
 ThreadPool::~ThreadPool()
 {
+	//destructor
+	std::cout << "calling threadpool destructor" << std::endl;
 	SDL_DestroyMutex(mJobLock);
 	SDL_DestroySemaphore(mWaitLock);
 	SDL_DestroyMutex(mEndLock);
@@ -36,14 +38,17 @@ ThreadPool::~ThreadPool()
 }
 bool ThreadPool::checkForFinish()
 {
-
-	mJob.clear();//clear jobs
+	
+	for(int i =0; i< mMaxThread;i++)
+		SDL_SemPost(mWaitLock);//unlock semphore
+		
+	
 	if (mThreadFinish == mMaxThread)
 	{
-		
+		std::cout << "Detacting Threads" << std::endl;
 		for (int i = 0; i < mMaxThread; i++)
 		{
-			SDL_DetachThread(mThreadPool[i]); 
+			SDL_DetachThread(mThreadPool[i]); //remove thread
 		}
 		mThreadPool.clear();
 		return true;
@@ -56,7 +61,7 @@ ThreadData* ThreadPool::getJob()
 
 	if (!mJob.empty())
 	{
-		ThreadData* task = mJob.front();
+		ThreadData* task = mJob.front();//get first job in quence
 		mJob.pop_front();
 		return task;
 	}
@@ -65,6 +70,6 @@ ThreadData* ThreadPool::getJob()
 
 void ThreadPool::addJob(ThreadData*  job)
 {
-	mJob.push_back(job);
-	//SDL_SemPost(mWaitLock);
+	mJob.push_back(job); 
+	SDL_SemPost(mWaitLock); 
 }

@@ -22,9 +22,7 @@ private:
 public:
 	AStar();
 	~AStar();
-	//const std::vector<Grid*>& findPath(short AIPosX, short AIPosY, short PlayerPosX, short PlayerPosY);
 	const std::vector<Grid*> findPath(Map &map, short AIPosX, short AIPosY, short PlayerPosX, short PlayerPosY);
-	//bool findPath(Grid *start, Grid *end);
 	void setHeuristicFunc(int num);
 
 };

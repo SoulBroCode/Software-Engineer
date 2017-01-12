@@ -5,10 +5,10 @@ Player::Player()
 
 Player::Player(Map* map, short posX, short posY) 
 {
-	_mainMap = map;
-	_currentGrid = new Grid(posX, posY);
+	mMap = map;
+	mCurrentGrid = new Grid(posX, posY);
 	TIME_TO_MOVE = 1000;
-	moving = false;
+	mMoving = false;
 }
 Player::~Player()
 {
@@ -19,9 +19,9 @@ Player::~Player()
 void Player::update(unsigned int deltatime)
 {
 
-	moveTimer -= deltatime;
-	if (moveTimer < 0) {
-		moveTimer = TIME_TO_MOVE;
+	mMoveTimer -= deltatime;
+	if (mMoveTimer < 0) {
+		mMoveTimer = TIME_TO_MOVE;
 		bool moved = false;
 		while (!moved)
 		{
@@ -51,16 +51,16 @@ void Player::update(unsigned int deltatime)
 				dirY = -1;
 				break;
 			}
-			short newPosX = _currentGrid->getX() + dirX;
-			short newPosY = _currentGrid->getY() + dirY;
-			int value = _mainMap->getGridVal(newPosX, newPosY);
+			short newPosX = mCurrentGrid->getX() + dirX;
+			short newPosY = mCurrentGrid->getY() + dirY;
+			int value = mMap->getGridVal(newPosX, newPosY);
 			if (value != GRID_WALL && value != GRID_START)
 			{
 				moved = true;
-				_mainMap->setGridVal(_currentGrid->getX(), _currentGrid->getY(), GRID_FIELD);
-				_currentGrid->setGridCoord(newPosX, newPosY);
-				_mainMap->setGridVal(newPosX, newPosY, GRID_END);
-				moving = true;
+				mMap->setGridVal(mCurrentGrid->getX(), mCurrentGrid->getY(), GRID_FIELD);
+				mCurrentGrid->setGridCoord(newPosX, newPosY);
+				mMap->setGridVal(newPosX, newPosY, GRID_END);
+				mMoving = true;
 			}
 			
 		}
@@ -73,23 +73,23 @@ void Player::update(unsigned int deltatime)
 
 void Player::setCurrentGrid(short int posX, short int posY)
 {
-	_currentGrid = new Grid(posX, posY);
+	mCurrentGrid = new Grid(posX, posY);
 }
 
 short Player::getX()
 {
-	return _currentGrid->getX();
+	return mCurrentGrid->getX();
 }
 short Player::getY()
 {
-	return  _currentGrid->getY();
+	return  mCurrentGrid->getY();
 }
 
 void Player::setMoving(bool move)
 {
-	moving = move;
+	mMoving = move;
 }
 bool Player::getMoving()
 {
-	return moving;
+	return mMoving;
 }
