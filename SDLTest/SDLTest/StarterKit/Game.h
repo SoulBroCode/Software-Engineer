@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <ctime>
 #include <SDL_image.h>
+#include <iostream>
 
 #include "ThreadPool.h"
 #include "Camera.h"
@@ -13,7 +14,6 @@
 #include "LTimer.h"
 #include "Player.h"
 #include "AI.h"
-
 #include "ThreadData.h"
 
 
@@ -23,6 +23,7 @@ class Game
 public:
 	Game();
 	~Game();
+	bool reset;
 	bool init(const char*, int, int, int, int, int);
 	void loadContent();
 	void unloadContent();
@@ -31,19 +32,12 @@ public:
 	void handleEvents();
 	bool isRunning();
 	void cleanUp();
-	void generateWall(int wallCount, int mapWidth);
 
 	void initLevel(int &mapWidth);
 	void InitAI(int gameWidth);
-	
-	
-	
-
-	Map mapTest;
-	Map* mMap;
-	Map newMap[7];
+	int counter;
 private:
-	void InitLevelOne(int& wallCount, int& wallSize, float& tileSize);
+	void InitLevelOne();
 	void InitLevelTwo();
 	void InitLevelThree();
 
@@ -60,7 +54,7 @@ private:
 
 	SDL_Surface* mSurface;
 
-	
+	Map* mMap;
 	AStar* mAStar;
 
 	Player* mPlayer;
@@ -69,38 +63,22 @@ private:
 	ThreadPool* mThreadPool;
 
 	int mMaxAI;
-
+	float mTileSize;
 	int mScreenSize;
 
-	int mEnemySpawnAreaMinX;
-	int mEnemySpawnAreaMinY;
-	int mEnemySpawnAreaMaxX;
-	int mEnemySpawnAreaMaxY;
+	int mEnemySpawnAreaX;
+	int mEnemySpawnAreaY;
 
-	int mPlayerSpawnAreaMinX;
-	int mPlayerSpawnAreaMinY;
-	int mPlayerSpawnAreaMaxX;
-	int mPlayerSpawnAreaMaxY;
+
+	int mPlayerSpawnAreaX;
+	int mPlayerSpawnAreaY;
+
 
 	bool mLoopRunning;
 	
 	unsigned int lastTime;//time of last update;
-
 	
-	
-	
-	
-
-	
-	int	_heuFunc;
-
-
-	//The threads that will be used
-
-	SDL_Thread *threadA = NULL;
-	SDL_Thread *threadB = NULL;
-
-	//The protective semaphore
+	int	mHeuFunc;
 	
 	bool quit = false;
 

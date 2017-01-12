@@ -29,7 +29,7 @@ void AStar::rebuildPath(std::vector<Grid*> &paths, Grid *start, Grid *end, int &
 	if (end->getGridVal() != GRID_END && end->getGridVal() != GRID_START) 
 	{
 		loopCount++;
-		//end->setGridVal(GRID_PATH);
+		end->setGridVal(GRID_PATH);
 		Grid* path = new Grid();
 		path->init(end->getX(), end->getY());
 		paths.push_back(path);
@@ -203,7 +203,8 @@ const std::vector<Grid*> AStar::findPath(Map &map, short AIPosX, short AIPosY, s
 				}
 			}
 			
-
+			_refToLastGrid = NULL;
+			delete _refToLastGrid;
 			current = NULL;
 			delete current;
 			start = NULL;
@@ -216,6 +217,7 @@ const std::vector<Grid*> AStar::findPath(Map &map, short AIPosX, short AIPosY, s
 
 
 			return paths;
+		
 		}
 		/**/
 		for (int d = 0; d < 4; d++)
@@ -244,7 +246,13 @@ const std::vector<Grid*> AStar::findPath(Map &map, short AIPosX, short AIPosY, s
 						{
 							neighbor->setG(tmp);
 							neighbor->setParent(current);
+							double tmp = current->getG() + 1.0f;
+							if (tmp < neighbor->getG())
+							{
+								neighbor->setG(tmp);
+								neighbor->setParent(current);
 
+							}
 						}
 					}
 				}

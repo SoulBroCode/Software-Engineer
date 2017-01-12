@@ -5,39 +5,40 @@
 #include <vector>
 #include "Map.h"
 
-
 class AI {
 private:
 	Map* mMap;
-	Grid* mCurrentGrid;
+	Grid* mCurrentGrid; //position the ai is on
 	std::vector<Grid*> mPath;
 	
 	int mMoveTimer;
 	
 	char mReachPlayer;
-	const int TIME_TO_MOVE = 200;
+	const int TIME_TO_MOVE = 70; //delay move
 
-	bool mReadyToMove;
+	bool mReadyToMove; 
+
+	bool mReachHalfWay; //use to check if ai reach half way to redo Astar
+	int mSizeHalfway;
+
 public:
-	
 	AI();
 	AI(Map* map , short posX, short posY);
 	~AI();
 	
-	void print()
-	{
-		std::cout << "AI PRINTING" << std::endl;
-	}
 	void update(unsigned int deltatime);
 
 
-	void setPath(const std::vector<Grid*> path);
+	void setPath(std::vector<Grid*> path);
 	void setCurrentGrid(short int posX, short int posY);
 
 	short getX();
 	short getY();
 
 	char getReachPlayer();
+
+	bool getReachHalfWay();
+	void setReachHalfWay(bool reachHalfWay);
 };
 
 #endif 

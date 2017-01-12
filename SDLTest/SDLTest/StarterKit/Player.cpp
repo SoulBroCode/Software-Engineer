@@ -25,17 +25,36 @@ void Player::update(unsigned int deltatime)
 		bool moved = false;
 		while (!moved)
 		{
-			int randomDirX = rand() % 3;
-			int randomDirY = rand() % 3;
-			if (randomDirX == 2)
-				randomDirX = -1;
-			if (randomDirY == 2)
-				randomDirY = -1;
-
-			short newPosX = _currentGrid->getX() + randomDirX;
-			short newPosY = _currentGrid->getY() + randomDirY;
+			int dir = rand() % 5;
+			short dirX;
+			short dirY;
+			switch (dir)
+			{
+			case 0:
+				dirX = 0;
+				dirY = 0;
+				break;
+			case 1:
+				dirX = 1;
+				dirY = 0;
+				break;
+			case 2:
+				dirX = 1;
+				dirY = 0;
+				break;
+			case 3:
+				dirX = 0;
+				dirY = 1;
+				break;
+			default:
+				dirX = 0;
+				dirY = -1;
+				break;
+			}
+			short newPosX = _currentGrid->getX() + dirX;
+			short newPosY = _currentGrid->getY() + dirY;
 			int value = _mainMap->getGridVal(newPosX, newPosY);
-			if (value != GRID_WALL)
+			if (value != GRID_WALL && value != GRID_START)
 			{
 				moved = true;
 				_mainMap->setGridVal(_currentGrid->getX(), _currentGrid->getY(), GRID_FIELD);

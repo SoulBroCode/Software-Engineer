@@ -1,51 +1,10 @@
 #include "Game.h"
-#include <iostream>
-#include <thread>
-
-
 
 using namespace std;
 
-
-int thread_A(void *data)
-{
-	Game *g = static_cast<Game*>(data);
-	Map map = *g->mMap;
-
-	while (true)
-	{	
-		//SDL_LockMutex(g->mutexLock);
-		//if (g->player->getMoving())
-		//{
-			
-			//g->ai->setPath(g->astar->findPath(g->ai->getX(), g->ai->getY(), g->player->getX(), g->player->getY()));
-			
-		//	g->player->setMoving(false);
-		//}
-		//SDL_UnlockMutex(g->mutexLock);
-	}
-	
-
-	
-	return 0;
-
-}
-
-
-
-//Mutex
-//	SDL_LockMutex(_taskLock);
-//_tasks.push_back(job);
-//SDL_UnlockMutex(_taskLock);
-//
-//SDL_SemWait(Game::lock);
-//
-//SDL_SemPost(Game::lock);
-
-
 Game::Game() : mLevel(Level::One),mLoopRunning(false)
 {
-	
+	counter = 0;
 }
 
 Game::~Game()
@@ -64,30 +23,15 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, in
 		DEBUG_MSG("SDL Init success");
 		mScreenSize = width;
 		mWindow = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
-
-	
-	
-		
 		
 		
 		int mapSize;
-
 		initLevel(mapSize);
-		mPlayer = new Player(mMap, 2, 2);
+		mPlayer = new Player(mMap, mPlayerSpawnAreaX, mPlayerSpawnAreaY);
 
 		mAStar = new AStar();
 		mAStar->setHeuristicFunc(0);
-		mThreadPool = new ThreadPool(2, mMap, mAStar, mPlayer);
-
-		InitAI(mapSize);
-
-
-
-		//lock = SDL_CreateSemaphore(2);
-		ThreadData* threadData = new ThreadData();
-
-		threadData->ai = mAI[0];
-		//threadA = SDL_CreateThread(thread_A, "1", this);
+		
 
 		if(mWindow != nullptr)
 		{
@@ -97,6 +41,9 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, in
 			{
 				DEBUG_MSG("Renderer creation success");
 				SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
+				mThreadPool = new ThreadPool(7, mMap, mAStar, mPlayer);
+
+				InitAI(mapSize);
 			}
 			else
 			{
@@ -126,62 +73,76 @@ void Game::initLevel(int &mapSize )
 	int spawnRegionOffset;
 	int wallCount;
 	int wallSize;
-	float tileSize;
-
-	//mLevel = Level::One;
+	
 	switch (mLevel)
 	{
 	case Level::One:
+		InitLevelOne();
 		mapSize = 30;
 		mMaxAI = 5;
-		wallCount = 3;
+		wallCount = 3;                  
 		wallSize = 20;
 
 		cam->setSize(mapSize);
-		tileSize = mScreenSize / (float)cam->getSize();
+		mTileSize = mScreenSize / (float)cam->getSize();
 		break;
 	case Level::Two:
+		InitLevelTwo();
 		mapSize = 100;
-		mMaxAI = 20;
+		mMaxAI = 50;
 		wallCount = 6;
 		wallSize = 60;
 		cam->setSize(mapSize);
-		tileSize = mScreenSize / (float)cam->getSize();
+		mTileSize = mScreenSize / (float)cam->getSize();
 		break;
 	default:
+		InitLevelThree();
 		mapSize = 1000;
 		wallCount = 18;
-		wallSize = 0; //600
-		mMaxAI = 1;
-		cam->setSize(100);
-		tileSize = mScreenSize / 100;
+		wallSize =  550; 
+		mMaxAI = 500;
+		cam->setSize(150);
+		mTileSize = mScreenSize / 150;
 		break;
 	}
 	
 	spawnRegionOffset = mapSize / (wallCount * 2);
 
-	cam->setSize(mapSize);
+	
 	cam->setMaxPosX(mapSize);
 	cam->setMaxPosY(mapSize);
-
-	mMap = new Map(mapSize, mapSize, tileSize, tileSize, 1);
+	mMap = nullptr;
+	delete mMap;
+	mMap = new Map(mapSize, mapSize, mTileSize, mTileSize, 1);
 	mMap->generateWall(wallCount, spawnRegionOffset, wallSize);
 }
 
 #pragma region InitLevel
-void Game::InitLevelOne(int& wallCount, int& wallSize, float& tileSize)
+void Game::InitLevelOne()
 {
-	
+	mEnemySpawnAreaX = 26; 
+	mEnemySpawnAreaY = 12;
+
+	mPlayerSpawnAreaX = 3;
+	mPlayerSpawnAreaY = 15;
 }
 
 void Game::InitLevelTwo()
 {
+	mEnemySpawnAreaX = 96; 
+	mEnemySpawnAreaY = 30;
 
+	mPlayerSpawnAreaX = 3;
+	mPlayerSpawnAreaY = 15;
 }
 
 void Game::InitLevelThree()
 {
+	mEnemySpawnAreaX = 980;
+	mEnemySpawnAreaY = 300;
 
+	mPlayerSpawnAreaX = 3;
+	mPlayerSpawnAreaY = 15;
 }
 #pragma endregion
 
@@ -189,29 +150,26 @@ void Game::InitLevelThree()
 
 void Game::InitAI(int width)
 {
-	mMap->setGridVal(2, 2, GRID_END);
-	
-	
+	mMap->setGridVal(mPlayerSpawnAreaX, mPlayerSpawnAreaY, GRID_END);
 
+	mAI.clear();
 	
-	for (int i = 0; i < 7; i++) {
-		newMap[i] = *mMap;
-	}
-	
-
-	for (int i = 0; i < 7; i++)
+	short counter = 0;
+	for (int i = 0; i < mMaxAI; i++)
 	{
-		short posX = 5 + rand() % (width - 8);
-		short posY = 5 + rand() % (width - 8);
+		counter++;
+		short posX = mEnemySpawnAreaX + (rand() % 3) - 1;
+		short posY = mEnemySpawnAreaY + counter;
 
 		AI* ai = new AI(mMap, posX, posY);
-		//ai->setPath(_algo->findPath(newMap[0], ai->getX(), ai->getY(), _player->getX(), _player->getY()));
 		mAI.push_back(ai);
+		ThreadData* threadData = new ThreadData();
+		threadData->ai = mAI[i];
+		mThreadPool->addJob(threadData);//first jobs added to pool
+	
 	}
 	
-	ThreadData* threadData = new ThreadData();
-	threadData->ai = mAI[0];
-	mThreadPool->addJob(threadData);
+	
 }
 
 void Game::loadContent()
@@ -224,39 +182,56 @@ void Game::update()
 	unsigned int currentTime = LTimer::gameTime();//millis since game started
 	unsigned int deltaTime = currentTime - lastTime;//time since last update
 
-	if (mPlayer->getMoving()) {
 
-		for (int i = 0; i < mAI.size(); i++)
-		{
-
-			Map mapTest = *mMap;
-			mAI[i]->setPath(mAStar->findPath(mapTest, mAI[i]->getX(), mAI[i]->getY(), mPlayer->getX(), mPlayer->getY()));
-
-
-
-		}
-		mPlayer->setMoving(false);
-
-	}
-
+	mPlayer->update(deltaTime);
 	bool finishLevel = true;
 	for (int i = 0; i < mAI.size(); i++)
 	{
 		mAI[i]->update(deltaTime);
 		
-		if (mAI[i]->getReachPlayer() == 0)
+		if (mAI[i]->getReachPlayer() == 0) //if ai hasnt reach player
 		{
 			finishLevel = false;
+			if (mAI[i]->getReachHalfWay())
+			{
+				ThreadData* threadData = new ThreadData();
+				threadData->ai = mAI[i];
+				mThreadPool->addJob(threadData);
+				mAI[i]->setReachHalfWay(false);
+			}
 		}
-	}
 
+	}
+ 
 	if (finishLevel)
 	{
-		int i = 0;
+		mThreadPool->mStop = true;
+		if (mThreadPool->checkForFinish())
+		{
+			switch (mLevel)
+			{
+			case Level::One:
+				mLevel = Level::Two;
+				break;
+			case Level::Two:
+				mLevel = Level::Three;
+				break;
+			default:
+				mLevel = Level::One;
+				break;				
+			}
+			
+			int size;
+			initLevel(size);
+			mPlayer = new Player(mMap, mPlayerSpawnAreaX, mPlayerSpawnAreaY);
+			mThreadPool = new ThreadPool(7, mMap, mAStar, mPlayer);
+			InitAI(size);
+		}
+		
 	}
 	
 	
-	mPlayer->update(deltaTime);
+	
 
 
 	lastTime = currentTime;	//save the curent time for next frame
@@ -337,22 +312,11 @@ void Game::handleEvents()
 				}
 				case SDLK_q:
 				{
-					DEBUG_MSG("S Key Pressed");
-					Camera *cam = Camera::getInstance();
-					
-					cam->zoom(-1);
-					mMap->setGridWidth(mScreenSize / (float)cam->getSize());
-					
 					break;
 				}
 				case SDLK_e:
 				{
-					DEBUG_MSG("e Key Pressed");
-					Camera *cam = Camera::getInstance();
 
-					cam->zoom(1);
-					mMap->setGridWidth(mScreenSize / (float)cam->getSize());
-					DEBUG_MSG(cam->getSize());
 					break;
 				}
 				case SDLK_LEFT:
@@ -399,29 +363,3 @@ void Game::cleanUp()
 	SDL_DestroyRenderer(mRenderer);
 	SDL_Quit();
 }
-
-void Game::generateWall(int wallCount, int mapWidth) 
-{
-	for (int i = 0; i < mapWidth; i++) 
-	{
-		for (int j = 0; j < mapWidth; j++)
-		{
-
-		}
-	}
-}
-
-
-
-
-/*
-void example()
-{
-	//Lock
-	SDL_SemWait(lock);
-
-	
-
-	//Unlock
-	SDL_SemPost(lock);
-}*/

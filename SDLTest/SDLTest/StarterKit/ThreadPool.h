@@ -18,18 +18,23 @@
 class ThreadPool {
 private:
 	std::vector<SDL_Thread*> mThreadPool;
-	std::vector<ThreadData*> mJob;
-	SDL_mutex* mJobLock;
-	
+	std::deque<ThreadData*> mJob;
+	char mMaxThread;
+	bool reset;
 	//SDL_sem* _lock;
 	
 public:
+	int mThreadFinish;
+	bool mStop;
+	SDL_mutex* mJobLock; //use spinning mutex to get job
+	SDL_mutex* mEndLock; //use spinning mutex to destory thread via counter
+	SDL_sem* mWaitLock; //semphore for adding jobs, only when there is a job that thread will run 
 	Map* mMap;
 	AStar* mAStar;
 	Player* mPlayer;
-	//Player* mPlayer;
+
 	ThreadPool();
-	ThreadPool(char numOfThread, Map* map, AStar* AStar, Player* player);
+	ThreadPool(int numOfThread, Map* map, AStar* AStar, Player* player);
 	~ThreadPool();
 	
 
@@ -38,19 +43,10 @@ public:
 
 	ThreadData* ThreadPool::getJob();
 
+	bool checkForFinish();
+
 	void addJob(ThreadData*  job);
 
-
-	static void action(void *data)
-	{
-		//ThreadData *tdata = static_cast<ThreadData*>(data);
-
-		//Astar* a = tdata->param1;
-		//AI* ai = tdata->param2;
-		//ai->setPath(a->findPath(ai->getX(), ai->getY(), 1, 1));
-		//ai->ready();
-		std::cout << "hello at : " << " don";
-	}
 
 };
 
@@ -61,30 +57,33 @@ static int worker(void* data)
 	Map map = *threadPool->mMap;
 	AStar* aStar = threadPool->mAStar;
 	Player* player = threadPool->mPlayer;
-	(*player).print();
-
 	
-	while (true)
+	
+	while (!threadPool->mStop)
 	{
-		std::cout << "threading!!!!!" << std::endl;
-
-		ThreadData* t = threadPool->getJob();
+		SDL_Delay(200);
+		//SDL_SemWait(threadPool->mWaitLock);
+		//spinning thread
+		while (SDL_LockMutex(threadPool->mJobLock) != 0)
+		{
+		}
+		ThreadData* t = threadPool->getJob(); 
+		SDL_UnlockMutex(threadPool->mJobLock);
 		if (t != nullptr)
 		{
+			std::cout << "Threading"<< std::endl;
 			AI* ai = t->ai;
-			(*ai).print();
-			//mPlayer = new Player(mMap, 2, 2);
-			//ai->setPath(aStar->findPath(map, ai->getX(), ai->getY(), player->getX(), player->getY()));
-			int i = 0;
-		}
-		//mAStar->findPath(mapTest, mAI[i]->getX(), mAI[i]->getY(), mPlayer->getX(), mPlayer->getY())
-		//aStar->findPath(map, t->ai->getX(), t->ai->getY(), player->getX(), player->getY())
-		//t->ai->setPath();
-		SDL_Delay(20000);
+			ai->setPath(aStar->findPath(map, ai->getX(), ai->getY(), player->getX(), player->getY()));
 
-		
+		}	
+	}
+	
+	while (SDL_LockMutex(threadPool->mEndLock) != 0)
+	{
 	}
 
+	threadPool->mThreadFinish ++;
+	SDL_UnlockMutex(threadPool->mEndLock);
 	return 0;
 }
 #endif

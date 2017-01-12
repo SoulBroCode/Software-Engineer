@@ -20,10 +20,6 @@ public:
 	Player(Map* map, short posX, short posY);
 	~Player();
 
-	void print()
-	{
-		std::cout << "player print";
-	}
 	void setCurrentGrid(short int posX, short int posY);
 	void update(unsigned int deltatime);
 

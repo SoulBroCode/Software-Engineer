@@ -135,7 +135,12 @@ void Map::resetStatus()
 {
 	for (int i = 0; i < _mapWidth; i++)
 		for (int j = 0; j < _mapHeight; j++)
+		{
 			_grid[i][j].setStatus(0);
+			_grid[i][j].setParent(NULL);
+			_grid[i][j].setH(0);
+			_grid[i][j].setG(0);
+		}
 			
 }
 
@@ -224,7 +229,10 @@ void Map::draw(SDL_Renderer *rend)
 	unsigned short camPosY = cam->getPosY();
 	int maxOffsetX = camPosX + cam->getSize();
 	int maxOffsetY = camPosY +cam->getSize();
-	
+	if (_grid[29][29].getGridVal() == GRID_WALL)
+	{
+		int i = 0;
+	}
 	for (int j = camPosY; j < maxOffsetY; j++)
 	{
 		for (int i = camPosX; i < maxOffsetX; i++)
@@ -236,7 +244,10 @@ void Map::draw(SDL_Renderer *rend)
 			rect.y = _gridHeight * j - _gridWidth * camPosY;
 			rect.h = _gridWidth;
 			rect.w = _gridHeight;
-			
+			if (i == 85)
+			{
+				int idk = 1;
+			}
 			/*
 			if (_grid[i][j].getGridVal() == GRID_FIELD)
 			if (_grid[i][j].getStatus() == GRID_STATUS_FREE)
@@ -265,7 +276,7 @@ void Map::draw(SDL_Renderer *rend)
 			
 			SDL_RenderFillRect(rend, &rect);
 			SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
-		
+			SDL_RenderDrawRect(rend, &rect);
 
 		}
 	}
